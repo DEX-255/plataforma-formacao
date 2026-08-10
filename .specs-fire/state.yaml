@@ -1,0 +1,190 @@
+project:
+  name: Plataforma DEX
+  description: Plataforma interna da Formação DEX — feedback estruturado dos
+    mentores e trajetória do participante ao longo do processo seletivo.
+  created: 2026-08-06T00:26:01Z
+  fire_version: 0.1.8
+workspace:
+  type: greenfield
+  structure: monolith
+  autonomy_bias: balanced
+  run_scope_preference: null
+  run_scope_history: []
+  notes: |
+    Nenhum código escrito ainda. O repositório contém apenas especificação
+    (specs/), documentos institucionais da DEX (dominio/) e material de marca
+    (marca/). A ordem de leitura ao retomar está em README.md.
+intents:
+  - id: plataforma-formacao-dex
+    title: Plataforma interna da Formação DEX
+    status: in_progress
+    work_items:
+      - id: fundacao-projeto
+        title: Fundação do projeto e design system em código
+        status: pending
+        complexity: medium
+        mode: confirm
+        depends_on: []
+      - id: esquema-e-rls
+        title: Esquema do banco e políticas de RLS
+        status: pending
+        complexity: high
+        mode: validate
+        depends_on:
+          - fundacao-projeto
+      - id: regras-de-dominio
+        title: Regras de domínio e frameworks de avaliação
+        status: pending
+        complexity: medium
+        mode: confirm
+        depends_on:
+          - fundacao-projeto
+      - id: auth-login-google
+        title: Login com Google, sessão e proteção de rota
+        status: completed
+        complexity: medium
+        mode: confirm
+        depends_on:
+          - esquema-e-rls
+          - regras-de-dominio
+        run_id: run-dex-002
+        completed_at: 2026-08-08T17:24:20.754Z
+      - id: membros-e-acesso
+        title: Membros e lista de e-mails autorizados
+        status: completed
+        complexity: low
+        mode: autopilot
+        depends_on:
+          - auth-login-google
+        run_id: run-dex-004
+        completed_at: 2026-08-08T21:43:09.669Z
+      - id: edicao-e-encontros
+        title: Edição, encontros e atribuição de eixos
+        status: pending
+        complexity: medium
+        mode: confirm
+        depends_on:
+          - auth-login-google
+      - id: registrar-feedback
+        title: Registrar feedback — a tela do mentor
+        status: pending
+        complexity: high
+        mode: validate
+        depends_on:
+          - edicao-e-encontros
+      - id: trajetoria-do-participante
+        title: Trajetória do participante
+        status: pending
+        complexity: medium
+        mode: confirm
+        depends_on:
+          - registrar-feedback
+      - id: presenca
+        title: Presença por encontro
+        status: pending
+        complexity: low
+        mode: autopilot
+        depends_on:
+          - edicao-e-encontros
+      - id: liberacao-do-encontro
+        title: Liberação semanal do encontro
+        status: pending
+        complexity: medium
+        mode: confirm
+        depends_on:
+          - trajetoria-do-participante
+      - id: caixa-anonima
+        title: Caixa de mensagem anônima
+        status: pending
+        complexity: high
+        mode: validate
+        depends_on:
+          - liberacao-do-encontro
+      - id: turma-e-cobertura
+        title: Turma e cobertura de feedback
+        status: pending
+        complexity: medium
+        mode: confirm
+        depends_on:
+          - registrar-feedback
+          - presenca
+      - id: landing-publica
+        title: Landing pública
+        status: completed
+        complexity: low
+        mode: autopilot
+        depends_on:
+          - fundacao-projeto
+        blocked_by: Pendência do SVG do símbolo e da transição 4b → 3e (pendencias.md)
+        run_id: run-dex-003
+        completed_at: 2026-08-08T21:06:25.390Z
+      - id: encerramento-da-edicao
+        title: Encerramento da edição
+        status: pending
+        complexity: medium
+        mode: confirm
+        depends_on:
+          - turma-e-cobertura
+      - id: documento-final
+        title: Documento final individual
+        status: pending
+        complexity: high
+        mode: validate
+        depends_on:
+          - encerramento-da-edicao
+runs:
+  active:
+    - id: run-dex-001
+      scope: wide
+      work_items:
+        - id: fundacao-projeto
+          intent: plataforma-formacao-dex
+          mode: confirm
+          status: completed
+          current_phase: review
+          checkpoint_state: approved
+          current_checkpoint: plan
+          completed_at: 2026-08-07T21:46:01.047Z
+        - id: esquema-e-rls
+          intent: plataforma-formacao-dex
+          mode: validate
+          status: completed
+          current_phase: review
+          checkpoint_state: approved
+          current_checkpoint: plan
+          completed_at: 2026-08-07T21:56:47.832Z
+        - id: regras-de-dominio
+          intent: plataforma-formacao-dex
+          mode: confirm
+          status: completed
+          current_phase: review
+          checkpoint_state: approved
+          current_checkpoint: plan
+          completed_at: 2026-08-08T17:16:39.964Z
+      current_item: null
+      started: 2026-08-07T21:31:05.307Z
+  completed:
+    - id: run-dex-002
+      scope: single
+      work_items:
+        - id: auth-login-google
+          intent: plataforma-formacao-dex
+          mode: confirm
+      started: 2026-08-08T17:17:02.969Z
+      completed: 2026-08-08T17:24:20.754Z
+    - id: run-dex-003
+      scope: single
+      work_items:
+        - id: landing-publica
+          intent: plataforma-formacao-dex
+          mode: autopilot
+      started: 2026-08-08T21:06:25.207Z
+      completed: 2026-08-08T21:06:25.390Z
+    - id: run-dex-004
+      scope: single
+      work_items:
+        - id: membros-e-acesso
+          intent: plataforma-formacao-dex
+          mode: autopilot
+      started: 2026-08-08T21:37:20.807Z
+      completed: 2026-08-08T21:43:09.669Z

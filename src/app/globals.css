@@ -1,0 +1,244 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Tokens — specs/05-design-system.md
+
+   Este é o ÚNICO arquivo do projeto onde cor em hexadecimal pode aparecer.
+   testes/guardas.test.ts falha se um hex escapar daqui.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* ── Base ──────────────────────────────────────────────────────────────── */
+  --color-roxo: #8c52ff;
+  --color-roxo-claro: #b08cff;
+  --color-preto: #14110f;
+  --color-papel: #f3f0e8;
+  --color-papel-alto: #faf8f3;
+
+  /* ── Semânticos ────────────────────────────────────────────────────────── */
+  /* Contrastes medidos sobre --preto: sucesso 5,47 · atencao 6,00 · neutro 5,14
+     — todos passam AA para texto pequeno. */
+  --color-sucesso: #3e9b6b;
+  --color-atencao: #c9821f;
+  --color-neutro: #8a857e;
+
+  /* --erro dá 2,88:1 sobre --preto e REPROVA para texto pequeno; sobre --papel
+     dá 5,74:1 e passa. Mesma divisão do roxo: o tom fechado é para fundo claro
+     (login, documento final), o claro é para o app escuro. Mensagem de erro é
+     justamente o texto que precisa ser lido quando algo deu errado. */
+  --color-erro: #b3261e;
+  --color-erro-claro: #ec5f5f; /* 5,70 sobre --preto · 5,30 sobre --superficie */
+
+  /* ── Superfícies do app ────────────────────────────────────────────────── */
+  --color-fundo: #14110f;
+  --color-superficie: #1c1917;
+  --color-superficie-alta: #252120;
+  --color-borda: rgb(243 240 232 / 0.12);
+  --color-borda-forte: #f3f0e8;
+
+  /* ── Tipografia ────────────────────────────────────────────────────────── */
+  --font-display: var(--fonte-bricolage), ui-sans-serif, sans-serif;
+  --font-sans: var(--fonte-space-grotesk), ui-sans-serif, sans-serif;
+  --font-mono: var(--fonte-space-mono), ui-monospace, monospace;
+  --font-serifa: var(--fonte-young-serif), ui-serif, serif;
+
+  /* Escala de specs/05. Os nomes são os papéis, não os tamanhos — é o que
+     impede alguém de escolher "text-2xl" por achar que parece certo. */
+  --text-display: clamp(88px, 22vw, 300px);
+  --text-display--line-height: 0.85;
+  --text-display--letter-spacing: -0.04em;
+
+  --text-titulo-tela: clamp(28px, 5vw, 44px);
+  --text-titulo-tela--line-height: 1.05;
+  --text-titulo-tela--letter-spacing: -0.02em;
+
+  --text-titulo-secao: 22px;
+  --text-titulo-secao--line-height: 1.2;
+
+  --text-corpo: 16px;
+  --text-corpo--line-height: 1.6;
+
+  --text-corpo-destaque: 18px;
+  --text-corpo-destaque--line-height: 1.6;
+
+  --text-secundario: 14px;
+  --text-secundario--line-height: 1.5;
+
+  --text-rotulo: 11px;
+  --text-rotulo--line-height: 1.2;
+  --text-rotulo--letter-spacing: 0.14em;
+
+  --text-kicker: 13px;
+  --text-kicker--line-height: 1.2;
+  --text-kicker--letter-spacing: 0.34em;
+
+  /* ── Forma ─────────────────────────────────────────────────────────────── */
+  --radius-campo: 14px;
+  --radius-cartao: 22px;
+  --radius-pilula: 100px;
+
+  /* Sombra sólida, nunca difusa. Profundidade vem de deslocamento e borda.
+
+     A cor da sombra segue o FUNDO, não o elemento: ela só existe se contrastar
+     com o que está atrás. Sobre papel é preta; sobre o fundo escuro do app,
+     preta sobre preta desaparece e a sombra passa a ser roxa. Elemento que já
+     é roxo (botão) usa papel, pelo mesmo motivo. */
+  --shadow-solida: 10px 10px 0 var(--color-preto);
+  --shadow-solida-roxo: 10px 10px 0 var(--color-roxo);
+  --shadow-botao-papel: 6px 6px 0 var(--color-papel);
+  --shadow-botao-papel-hover: 4px 4px 0 var(--color-papel);
+  --shadow-botao: 6px 6px 0 var(--color-preto);
+  --shadow-botao-hover: 4px 4px 0 var(--color-preto);
+  --shadow-botao-ativo: 0 0 0 var(--color-preto);
+  --shadow-selo: 4px 4px 0 var(--color-preto);
+  --shadow-foco: 3px 3px 0 var(--color-roxo);
+
+  /* ── Espaçamento ───────────────────────────────────────────────────────── */
+  /* Base 4: toda classe de espaçamento vira múltiplo de 4px automaticamente. */
+  --spacing: 4px;
+
+  /* ── Movimento ─────────────────────────────────────────────────────────── */
+  --ease-saida: cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Alvos de toque — specs/05, seção Mobile
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@theme {
+  --size-toque: 44px; /* mínimo absoluto */
+  --size-toque-lista: 56px; /* lista percorrida em sequência */
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Base
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-fundo);
+    color: var(--color-papel);
+    font-family: var(--font-sans);
+    font-size: var(--text-corpo);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* O anel de foco nunca é removido — specs/07, Acessibilidade. */
+  :focus-visible {
+    outline: 2px solid var(--color-roxo-claro);
+    outline-offset: 2px;
+  }
+
+  /* iOS dá zoom sozinho ao focar campo abaixo de 16px, e o mentor perde o
+     contexto da tela no meio do preenchimento. */
+  input,
+  textarea,
+  select {
+    font-size: max(16px, 1em);
+  }
+
+  ::selection {
+    background-color: var(--color-roxo);
+    color: var(--color-papel);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Forma — specs/05
+
+   A borda dura de 2.5px aparece em botão, cartão, campo e selo. Vira utilitário
+   para o número não ficar espalhado como valor mágico em cinco componentes.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Alvo de toque — specs/05, seção Mobile.
+   Precisa ser utilitário declarado: o namespace --size-* do Tailwind 4 alimenta
+   size-*, w-* e h-*, mas NÃO min-h-*. Escrever `min-h-toque` sem isto gera
+   classe nenhuma, e a altura mínima simplesmente não existe — os botões
+   pareciam certos só pelo padding. */
+@utility min-h-toque {
+  min-height: var(--size-toque);
+}
+
+@utility min-h-toque-lista {
+  min-height: var(--size-toque-lista);
+}
+
+@utility borda-dura {
+  border-width: 2.5px;
+  border-style: solid;
+}
+
+/* Roxo em GRÁFICO (símbolo, ícone, traço de gráfico) — não em texto.
+   A regra do roxo trata de legibilidade de tipografia: `--roxo` dá 4,27:1, que
+   reprova para texto pequeno mas passa folgado o mínimo de 3:1 que a WCAG pede
+   para elemento gráfico. Separar os dois usos deixa a guarda de
+   testes/guardas.test.ts precisa: `text-roxo` passa a ser sempre sobre texto. */
+@utility icone-roxo {
+  color: var(--color-roxo);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Textura — specs/05
+
+   Grão e halftone em CSS, sem imagem externa. Vivem na home, no login e no
+   documento final. Nas telas de trabalho ficam de fora: atrapalham a leitura
+   de texto denso, e a tela de registrar feedback é a mais densa que existe.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@utility grao {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.4;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23r)'/%3E%3C/svg%3E");
+  }
+}
+
+@utility grao-claro {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.4;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23r)'/%3E%3C/svg%3E");
+  }
+}
+
+@utility halftone {
+  background-image: radial-gradient(
+    rgb(243 240 232 / 0.16) 1.4px,
+    transparent 1.6px
+  );
+  background-size: 15px 15px;
+  opacity: 0.55;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Movimento — specs/05
+
+   Só transform e opacity. Nada anima layout.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-property: opacity !important;
+    transition-duration: 150ms !important;
+    animation: none !important;
+  }
+}

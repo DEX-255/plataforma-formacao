@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Young+Serif&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#e4e0d7;font-family:'Space Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:#8C52FF;text-decoration:none}
+  a:hover{color:#5B29C7}
+  /* doc scaffolding */
+  .dv-turn{padding:44px 48px 36px;border-bottom:1px solid rgba(0,0,0,.09);scroll-margin-top:16px}
+  .dv-intro{padding:44px 48px 8px}
+  .dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 24px}
+  .dv-tid{font:700 11px ui-monospace,Menlo,monospace;padding:4px 8px;background:#14110F;color:#F3F0E8;border-radius:5px;text-decoration:none}
+  .dv-tid:hover{color:#fff}
+  .dv-tname{font:600 14px/1.2 'Space Grotesk',sans-serif;color:#14110F}
+  .dv-opts{display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start}
+  .dv-opt{flex:none;display:flex;flex-direction:column;gap:11px;scroll-margin-top:16px}
+  .dv-oid{font:700 11px ui-monospace,Menlo,monospace;padding:4px 8px;background:rgba(20,17,15,.09);color:#14110F;border-radius:6px;text-decoration:none}
+  .dv-olabel{display:flex;align-items:center;gap:10px;font:500 13px/1.3 'Space Grotesk',sans-serif;color:rgba(20,17,15,.6)}
+  .dv-card{max-width:100%;background:#F3F0E8;border:1px solid rgba(20,17,15,.12);border-radius:14px;box-shadow:0 20px 50px -24px rgba(20,17,15,.4);overflow:hidden}
+  .dv-opt:target .dv-oid{background:#8C52FF;color:#fff}
+  .dv-next{margin:26px 0 0;font:13px/1.6 'Space Grotesk',sans-serif;color:rgba(20,17,15,.55)}
+  /* textures */
+  .tex-grain{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:150px 150px}
+  .tex-halftone{background-image:radial-gradient(rgba(20,17,15,.17) 1.3px,transparent 1.5px);background-size:14px 14px}
+  .tex-iso{background-image:repeating-linear-gradient(30deg,rgba(140,82,255,.16) 0 1px,transparent 1px 28px),repeating-linear-gradient(-30deg,rgba(140,82,255,.16) 0 1px,transparent 1px 28px),repeating-linear-gradient(90deg,rgba(140,82,255,.08) 0 1px,transparent 1px 28px)}
+  /* animations */
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+  @keyframes floaty2{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-12px) rotate(4deg)}}
+  @keyframes wavearm{0%,100%{transform:rotate(-30deg)}50%{transform:rotate(-6deg)}}
+  @keyframes look{0%,22%{transform:translate(0,0)}38%{transform:translate(7px,-2px)}56%{transform:translate(-7px,2px)}74%,100%{transform:translate(0,0)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes dv-blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+  input::placeholder{color:rgba(20,17,15,.38)}
+  .dv-glass-in::placeholder{color:rgba(243,240,232,.6)}
+</style>
+</helmet>
+
+<!-- ===================== INTRO / SYSTEM ===================== -->
+<section class="dv-intro">
+  <div style="max-width:1180px">
+    <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:#8C52FF">DEX · UFG — direções de design</div>
+    <h1 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:56px;line-height:1;margin:14px 0 10px;color:#14110F">5 caras para a mesma marca.</h1>
+    <p style="max-width:640px;margin:0 0 26px;font-size:16px;line-height:1.55;color:rgba(20,17,15,.7)">Mesmo DNA (roxo DEX + preto quente + papel), personalidades diferentes. Tudo desenhado em código — sem gradiente, sem banco de imagem, sem “cara de IA”. Escolha a base e os detalhes que curtir; misturamos e seguimos pro login.</p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start;padding:22px 24px;background:#faf8f3;border:1px solid rgba(20,17,15,.1);border-radius:12px">
+      <!-- palette -->
+      <div>
+        <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(20,17,15,.5);margin-bottom:10px">Paleta</div>
+        <div style="display:flex;gap:10px">
+          <div style="text-align:center"><div style="width:44px;height:44px;border-radius:9px;background:#8C52FF;border:1px solid rgba(0,0,0,.1)"></div><div style="font:400 10px 'Space Mono',monospace;margin-top:5px;color:rgba(20,17,15,.6)">#8C52FF</div></div>
+          <div style="text-align:center"><div style="width:44px;height:44px;border-radius:9px;background:#14110F"></div><div style="font:400 10px 'Space Mono',monospace;margin-top:5px;color:rgba(20,17,15,.6)">#14110F</div></div>
+          <div style="text-align:center"><div style="width:44px;height:44px;border-radius:9px;background:#F3F0E8;border:1px solid rgba(0,0,0,.14)"></div><div style="font:400 10px 'Space Mono',monospace;margin-top:5px;color:rgba(20,17,15,.6)">#F3F0E8</div></div>
+        </div>
+      </div>
+      <!-- mark -->
+      <div>
+        <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(20,17,15,.5);margin-bottom:10px">Marca → mascote</div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <img src="assets/dex-mark.png" alt="DEX" style="width:46px;height:auto">
+          <span style="font-size:22px;color:rgba(20,17,15,.35)">→</span>
+          <!-- tiny mascot preview -->
+          <div style="width:58px;height:72px"><dc-import name="DexMascot" tone="purple" eyes="one" hint-size="58px,72px" style="display:block;width:58px;height:72px"></dc-import></div>
+        </div>
+      </div>
+      <!-- principles -->
+      <div style="flex:1;min-width:230px">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(20,17,15,.5);margin-bottom:10px">Princípios</div>
+        <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.7;color:rgba(20,17,15,.72)">
+          <li>Fundo quase sólido e minimalista (padrão das refs)</li>
+          <li>Zero gradiente roxo — roxo chapado + textura</li>
+          <li>Fio condutor: “de pessoas, para pessoas”</li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin:14px 2px 0;font:400 11.5px/1.5 'Space Mono',monospace;color:rgba(20,17,15,.42)">* números de impacto são placeholders — troquem pelos reais.</p>
+  </div>
+</section>
+
+<!-- ===================== TURN 4 (1d CLARO) ===================== -->
+<section class="dv-turn" id="t4">
+  <div class="dv-thd"><a class="dv-tid" href="#t4">4</a><span class="dv-tname">Nova variável — <a class="dv-oid" href="#1d">1d</a> em fundo claro + header da <a class="dv-oid" href="#1a">1a</a></span></div>
+  <div class="dv-opts">
+    <div class="dv-opt" id="4a">
+      <div class="dv-olabel"><a class="dv-oid" href="#4a">4a</a>Poster riso invertido — papel claro, letras roxas, risco preto</div>
+      <div class="dv-card" style="width:1180px">
+        <div style="height:38px;background:#e7e3da;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid rgba(20,17,15,.09)">
+          <div style="display:flex;gap:6px"><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span></div>
+          <div style="margin:0 auto;font:400 12px 'Space Mono',monospace;color:rgba(20,17,15,.45);background:#f3f0e8;padding:3px 20px;border-radius:20px">dex.ufg.br</div>
+        </div>
+        <div data-screen-label="Home 4a" style="position:relative;height:648px;background:#F3F0E8;overflow:hidden;color:#14110F">
+          <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(20,17,15,.22) 1.4px,transparent 1.6px);background-size:15px 15px;opacity:.5;pointer-events:none"></div>
+          <div class="tex-grain" style="position:absolute;inset:0;opacity:.45;mix-blend-mode:multiply;pointer-events:none"></div>
+          <!-- header (da 1a) -->
+          <div style="position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:26px 46px;z-index:6">
+            <a href="#4a" style="display:flex;align-items:center;gap:12px;color:#14110F" style-hover="opacity:.7"><img src="assets/dex-mark.png" style="width:32px;height:auto"><span style="font-weight:700;font-size:22px;letter-spacing:.01em">DEX</span></a>
+            <div style="display:flex;align-items:center;gap:30px;font-size:15px;font-weight:500">
+              <a href="#4a" style="color:#14110F" style-hover="color:#8C52FF">A DEX</a>
+              <a href="#4a" style="color:#14110F" style-hover="color:#8C52FF">Impacto</a>
+              <a href="#4a" style="color:#14110F;border:1.5px solid #14110F;border-radius:100px;padding:9px 22px" style-hover="background:#14110F;color:#F3F0E8">Entrar</a>
+            </div>
+          </div>
+          <!-- hero -->
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px">
+            <div style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.34em;text-transform:uppercase;margin-bottom:6px;color:#8C52FF">Hub de empreendedorismo · UFG</div>
+            <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:300px;line-height:.82;margin:0;letter-spacing:-.03em;color:#8C52FF;text-shadow:10px 10px 0 #14110F">DEX</h1>
+            <div style="position:relative;margin-top:26px">
+              <p style="font-family:'Young Serif',serif;font-size:40px;margin:0;line-height:1;color:#8C52FF">De pessoas. Para pessoas.</p>
+              <div style="position:absolute;top:-14px;left:-30px;right:-30px;bottom:-14px;border:3px solid #14110F;border-radius:50%;transform:rotate(-3deg);opacity:.85"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="dv-opt" id="4b">
+      <div class="dv-olabel"><a class="dv-oid" href="#4b">4b</a>Fundo preto — DEX roxo</div>
+      <div class="dv-card" style="width:1180px">
+        <div style="height:38px;background:#e7e3da;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid rgba(20,17,15,.09)">
+          <div style="display:flex;gap:6px"><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span></div>
+          <div style="margin:0 auto;font:400 12px 'Space Mono',monospace;color:rgba(20,17,15,.45);background:#f3f0e8;padding:3px 20px;border-radius:20px">dex.ufg.br</div>
+        </div>
+        <div data-screen-label="Home 4b" style="position:relative;height:648px;background:#14110F;overflow:hidden;color:#F3F0E8">
+          <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(243,240,232,.16) 1.4px,transparent 1.6px);background-size:15px 15px;opacity:.55;pointer-events:none"></div>
+          <div class="tex-grain" style="position:absolute;inset:0;opacity:.4;mix-blend-mode:overlay;pointer-events:none"></div>
+          <!-- header (da 1a) -->
+          <div style="position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:26px 46px;z-index:6">
+            <a href="#4b" style="display:flex;align-items:center;gap:12px;color:#F3F0E8" style-hover="opacity:.7"><img src="assets/dex-mark.png" style="width:32px;height:auto"><span style="font-weight:700;font-size:22px;letter-spacing:.01em">DEX</span></a>
+            <div style="display:flex;align-items:center;gap:30px;font-size:15px;font-weight:500">
+              <a href="#4b" style="color:#F3F0E8" style-hover="color:#B08CFF">A DEX</a>
+              <a href="#4b" style="color:#F3F0E8" style-hover="color:#B08CFF">Impacto</a>
+              <a href="#4b" style="color:#F3F0E8;border:1.5px solid #F3F0E8;border-radius:100px;padding:9px 22px" style-hover="background:#F3F0E8;color:#14110F">Entrar</a>
+            </div>
+          </div>
+          <!-- hero -->
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px">
+            <div style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.34em;text-transform:uppercase;margin-bottom:6px;color:#8C52FF">Hub de empreendedorismo · UFG</div>
+            <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:300px;line-height:.82;margin:0;letter-spacing:-.03em;color:#8C52FF;text-shadow:10px 10px 0 #14110F">DEX</h1>
+            <div style="position:relative;margin-top:26px">
+              <p style="font-family:'Young Serif',serif;font-size:40px;margin:0;line-height:1;color:#8C52FF">De pessoas. Para pessoas.</p>
+              <div style="position:absolute;top:-14px;left:-30px;right:-30px;bottom:-14px;border:3px solid #8C52FF;border-radius:50%;transform:rotate(-3deg);opacity:.85"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<div class="dv-opt" id="4c">
+      <div class="dv-olabel"><a class="dv-oid" href="#4c">4c</a>Como 4a — kicker e tagline pretos, riscado roxo</div>
+      <div class="dv-card" style="width:1180px">
+        <div style="height:38px;background:#e7e3da;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid rgba(20,17,15,.09)">
+          <div style="display:flex;gap:6px"><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span></div>
+          <div style="margin:0 auto;font:400 12px 'Space Mono',monospace;color:rgba(20,17,15,.45);background:#f3f0e8;padding:3px 20px;border-radius:20px">dex.ufg.br</div>
+        </div>
+        <div data-screen-label="Home 4c" style="position:relative;height:648px;background:#F3F0E8;overflow:hidden;color:#14110F">
+          <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(20,17,15,.22) 1.4px,transparent 1.6px);background-size:15px 15px;opacity:.5;pointer-events:none"></div>
+          <div class="tex-grain" style="position:absolute;inset:0;opacity:.45;mix-blend-mode:multiply;pointer-events:none"></div>
+          <!-- header (da 1a) -->
+          <div style="position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:26px 46px;z-index:6">
+            <a href="#4c" style="display:flex;align-items:center;gap:12px;color:#14110F" style-hover="opacity:.7"><img src="assets/dex-mark.png" style="width:32px;height:auto"><span style="font-weight:700;font-size:22px;letter-spacing:.01em">DEX</span></a>
+            <div style="display:flex;align-items:center;gap:30px;font-size:15px;font-weight:500">
+              <a href="#4c" style="color:#14110F" style-hover="color:#8C52FF">A DEX</a>
+              <a href="#4c" style="color:#14110F" style-hover="color:#8C52FF">Impacto</a>
+              <a href="#4c" style="color:#14110F;border:1.5px solid #14110F;border-radius:100px;padding:9px 22px" style-hover="background:#14110F;color:#F3F0E8">Entrar</a>
+            </div>
+          </div>
+          <!-- hero -->
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px">
+            <div style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.34em;text-transform:uppercase;margin-bottom:6px;color:#14110F">Hub de empreendedorismo · UFG</div>
+            <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:300px;line-height:.82;margin:0;letter-spacing:-.03em;color:#8C52FF;text-shadow:10px 10px 0 #14110F">DEX</h1>
+            <div style="position:relative;margin-top:26px">
+              <p style="font-family:'Young Serif',serif;font-size:40px;margin:0;line-height:1;color:#14110F">De pessoas. Para pessoas.</p>
+              <div style="position:absolute;top:-14px;left:-30px;right:-30px;bottom:-14px;border:3px solid #8C52FF;border-radius:50%;transform:rotate(-3deg);opacity:.85"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="dv-opt" id="4c">
+      <div class="dv-olabel"><a class="dv-oid" href="#4c">4c</a>Como 4a — kicker e tagline pretos, risco roxo</div>
+      <div class="dv-card" style="width:1180px">
+        <div style="height:38px;background:#e7e3da;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid rgba(20,17,15,.09)">
+          <div style="display:flex;gap:6px"><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span></div>
+          <div style="margin:0 auto;font:400 12px 'Space Mono',monospace;color:rgba(20,17,15,.45);background:#f3f0e8;padding:3px 20px;border-radius:20px">dex.ufg.br</div>
+        </div>
+        <div data-screen-label="Home 4c" style="position:relative;height:648px;background:#F3F0E8;overflow:hidden;color:#14110F">
+          <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(20,17,15,.22) 1.4px,transparent 1.6px);background-size:15px 15px;opacity:.5;pointer-events:none"></div>
+          <div class="tex-grain" style="position:absolute;inset:0;opacity:.45;mix-blend-mode:multiply;pointer-events:none"></div>
+          <!-- header (da 1a) -->
+          <div style="position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:26px 46px;z-index:6">
+            <a href="#4c" style="display:flex;align-items:center;gap:12px;color:#14110F" style-hover="opacity:.7"><img src="assets/dex-mark.png" style="width:32px;height:auto"><span style="font-weight:700;font-size:22px;letter-spacing:.01em">DEX</span></a>
+            <div style="display:flex;align-items:center;gap:30px;font-size:15px;font-weight:500">
+              <a href="#4c" style="color:#14110F" style-hover="color:#8C52FF">A DEX</a>
+              <a href="#4c" style="color:#14110F" style-hover="color:#8C52FF">Impacto</a>
+              <a href="#4c" style="color:#14110F;border:1.5px solid #14110F;border-radius:100px;padding:9px 22px" style-hover="background:#14110F;color:#F3F0E8">Entrar</a>
+            </div>
+          </div>
+          <!-- hero -->
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px">
+            <div style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.34em;text-transform:uppercase;margin-bottom:6px;color:#14110F">Hub de empreendedorismo · UFG</div>
+            <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:300px;line-height:.82;margin:0;letter-spacing:-.03em;color:#8C52FF;text-shadow:10px 10px 0 #14110F">DEX</h1>
+            <div style="position:relative;margin-top:26px">
+              <p style="font-family:'Young Serif',serif;font-size:40px;margin:0;line-height:1;color:#14110F">De pessoas. Para pessoas.</p>
+              <div style="position:absolute;top:-14px;left:-30px;right:-30px;bottom:-14px;border:3px solid #8C52FF;border-radius:50%;transform:rotate(-3deg);opacity:.9"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+      </div>
+  <p class="dv-next">Comparar com a <a class="dv-oid" href="#1d">1d</a> original (roxa) logo abaixo. Diga: “fecha essa como base” · “tagline em preto” · “risco roxo em vez de preto”.</p>
+</section>
+
+<!-- ===================== TURN 3 (LOGIN) ===================== -->
+<section class="dv-turn" id="t3">
+  <div class="dv-thd"><a class="dv-tid" href="#t3">3</a><span class="dv-tname">Home + Login — pares lado a lado</span></div>
+  <p style="max-width:700px;margin:-8px 0 22px;font-size:15px;line-height:1.55;color:rgba(20,17,15,.72)">Protótipos funcionais: alterna <strong>entrar ↔ criar conta</strong>, mostrar/ocultar senha e valida os campos (nada é enviado). Cada linha: a Home à esquerda e seu login à direita.</p>
+  <div class="dv-opts" style="flex-direction:column">
+    <div style="display:flex;gap:36px;align-items:flex-start">
+      <!-- ============ 1a EDITORIAL ============ -->
+    <div class="dv-opt" id="1a">
+      <div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Editorial — fiel às referências (nome gigante + frase)</div>
+      <div class="dv-card" style="width:1180px">
+        <div style="height:38px;background:#e7e3da;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid rgba(20,17,15,.09)">
+          <div style="display:flex;gap:6px"><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span></div>
+          <div style="margin:0 auto;font:400 12px 'Space Mono',monospace;color:rgba(20,17,15,.45);background:#f3f0e8;padding:3px 20px;border-radius:20px">dex.ufg.br</div>
+        </div>
+        <div data-screen-label="Home 1a" style="position:relative;height:648px;background:#F3F0E8;overflow:hidden;color:#14110F">
+          <div class="tex-grain" style="position:absolute;inset:0;opacity:.45;mix-blend-mode:multiply;pointer-events:none"></div>
+          <!-- header -->
+          <div style="position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:26px 46px;z-index:6">
+            <a href="#1a" style="display:flex;align-items:center;gap:12px;color:#14110F" style-hover="opacity:.7"><img src="assets/dex-mark.png" style="width:32px;height:auto"><span style="font-weight:700;font-size:22px;letter-spacing:.01em">DEX</span></a>
+            <div style="display:flex;align-items:center;gap:30px;font-size:15px;font-weight:500">
+              <a href="#1a" style="color:#14110F" style-hover="color:#8C52FF">A DEX</a>
+              <a href="#1a" style="color:#14110F" style-hover="color:#8C52FF">Impacto</a>
+              <a href="#1a" style="color:#14110F;border:1.5px solid #14110F;border-radius:100px;padding:9px 22px" style-hover="background:#14110F;color:#F3F0E8">Entrar</a>
+            </div>
+          </div>
+          <!-- hero -->
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 40px">
+            <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:#8C52FF;margin-bottom:8px">Hub de empreendedorismo · UFG</div>
+            <div style="position:relative;display:flex;align-items:center;justify-content:center">
+              <span style="position:absolute;font-family:'Instrument Serif',serif;font-size:440px;line-height:1;color:rgba(140,82,255,.10);z-index:0;user-select:none">DEX</span>
+              <h1 style="position:relative;font-family:'Instrument Serif',serif;font-weight:400;font-size:250px;line-height:.86;margin:0;letter-spacing:.01em;z-index:1">DEX</h1>
+            </div>
+            <p style="font-family:'Instrument Serif',serif;font-size:33px;font-style:italic;margin:6px 0 0;max-width:620px;line-height:1.15">Hub de empreendedorismo da UFG — de pessoas, para pessoas.</p>
+          </div>
+          <!-- wave + mascot -->
+          <svg viewBox="0 0 1180 130" preserveAspectRatio="none" style="position:absolute;left:0;right:0;bottom:0;width:100%;height:120px;display:block;z-index:2"><path d="M0,52 C 220,104 380,8 610,44 C 820,78 1010,20 1180,58 L1180,130 L0,130 Z" fill="#8C52FF"></path></svg>
+          <div style="position:absolute;right:104px;bottom:50px;z-index:3;width:120px;height:150px;animation:floaty 5s ease-in-out infinite"><dc-import name="DexMascot" tone="light" eyes="one" hint-size="120px,150px" style="display:block;width:120px;height:150px"></dc-import></div>
+        </div>
+      </div>
+    </div>
+      <!-- ===== 3a EDITORIAL ===== -->
+    <div class="dv-opt" id="3a">
+      <div class="dv-olabel"><a class="dv-oid" href="#3a">3a</a>Editorial — par da <a class="dv-oid" href="#1a">1a</a></div>
+      <div class="dv-card" style="width:1180px">
+        <div style="height:38px;background:#e7e3da;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid rgba(20,17,15,.09)">
+          <div style="display:flex;gap:6px"><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span></div>
+          <div style="margin:0 auto;font:400 12px 'Space Mono',monospace;color:rgba(20,17,15,.45);background:#f3f0e8;padding:3px 20px;border-radius:20px">dex.ufg.br/entrar</div>
+        </div>
+        <div data-screen-label="Login 3a" style="position:relative;height:648px;background:#F3F0E8;overflow:hidden;color:#14110F">
+          <div class="tex-grain" style="position:absolute;inset:0;opacity:.45;mix-blend-mode:multiply;pointer-events:none"></div>
+          <div style="position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:26px 46px;z-index:6">
+            <a href="#3a" style="display:flex;align-items:center;gap:12px;color:#14110F"><img src="assets/dex-mark.png" style="width:32px;height:auto"><span style="font-weight:700;font-size:22px">DEX</span></a>
+            <a href="#1a" style="font-size:14px;font-weight:500;color:#14110F" style-hover="color:#8C52FF">← voltar ao site</a>
+          </div>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 40px 90px;z-index:3">
+            <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:#8C52FF;margin-bottom:10px">Área de membros</div>
+            <sc-if value="{{ loginA }}" hint-placeholder-val="{{ true }}"><h1 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:62px;line-height:1;margin:0 0 6px;text-align:center">Bem-vindo de volta.</h1></sc-if>
+            <sc-if value="{{ signupA }}"><h1 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:62px;line-height:1;margin:0 0 6px;text-align:center">Vem fazer parte.</h1></sc-if>
+            <p style="font-family:'Instrument Serif',serif;font-style:italic;font-size:20px;margin:0 0 34px;color:rgba(20,17,15,.65)">de pessoas, para pessoas</p>
+            <form onSubmit="{{ submitA }}" style="display:flex;flex-direction:column;gap:20px;width:400px">
+              <sc-if value="{{ signupA }}"><input name="nome" placeholder="seu nome" style="font-family:'Space Grotesk',sans-serif;font-size:17px;background:transparent;border:none;border-bottom:1.5px solid rgba(20,17,15,.4);padding:11px 2px;color:#14110F;outline:none" style-focus="border-bottom-color:#8C52FF"></sc-if>
+              <input name="email" placeholder="voce@email.com" style="font-family:'Space Grotesk',sans-serif;font-size:17px;background:transparent;border:none;border-bottom:1.5px solid rgba(20,17,15,.4);padding:11px 2px;color:#14110F;outline:none" style-focus="border-bottom-color:#8C52FF">
+              <div style="position:relative;display:flex">
+                <input name="senha" type="{{ pwTypeA }}" placeholder="senha" style="flex:1;font-family:'Space Grotesk',sans-serif;font-size:17px;background:transparent;border:none;border-bottom:1.5px solid rgba(20,17,15,.4);padding:11px 78px 11px 2px;color:#14110F;outline:none" style-focus="border-bottom-color:#8C52FF">
+                <button type="button" onClick="{{ togglePwA }}" style="position:absolute;right:0;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-family:'Space Mono',monospace;font-size:12px;color:rgba(20,17,15,.55);padding:6px 2px" style-hover="color:#8C52FF">{{ pwLabelA }}</button>
+              </div>
+              <sc-if value="{{ errA }}"><div style="font-size:13.5px;color:#B3261E">{{ errA }}</div></sc-if>
+              <button type="submit" style="margin-top:8px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;color:#F3F0E8;background:#14110F;border:none;border-radius:100px;padding:16px;cursor:pointer" style-hover="background:#8C52FF">{{ ctaA }}</button>
+            </form>
+            <button type="button" onClick="{{ toggleModeA }}" style="margin-top:22px;background:none;border:none;cursor:pointer;font-family:'Space Mono',monospace;font-size:13px;color:rgba(20,17,15,.6);text-decoration:underline;text-underline-offset:3px" style-hover="color:#8C52FF">{{ toggleLabelA }}</button>
+          </div>
+          <svg viewBox="0 0 1180 130" preserveAspectRatio="none" style="position:absolute;left:0;right:0;bottom:0;width:100%;height:90px;display:block;z-index:2"><path d="M0,52 C 220,104 380,8 610,44 C 820,78 1010,20 1180,58 L1180,130 L0,130 Z" fill="#8C52FF"></path></svg>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:flex-start">
+      <!-- ============ 1b GROTESCA BOLD ============ -->
+    <div class="dv-opt" id="1b">
+      <div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Grotesca bold — energia de startup, impacto integrado</div>
+      <div class="dv-card" style="width:1180px">
+        <div style="height:38px;background:#e7e3da;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid rgba(20,17,15,.09)">
+          <div style="display:flex;gap:6px"><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span></div>
+          <div style="margin:0 auto;font:400 12px 'Space Mono',monospace;color:rgba(20,17,15,.45);background:#f3f0e8;padding:3px 20px;border-radius:20px">dex.ufg.br</div>
+        </div>
+        <div data-screen-label="Home 1b" style="position:relative;height:648px;background:#F3F0E8;overflow:hidden;color:#14110F">
+          <div class="tex-halftone" style="position:absolute;top:0;right:0;width:44%;height:100%;opacity:.5;pointer-events:none;-webkit-mask-image:linear-gradient(90deg,transparent,#000 60%);mask-image:linear-gradient(90deg,transparent,#000 60%)"></div>
+          <!-- header -->
+          <div style="position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:26px 48px;z-index:6">
+            <a href="#1b" style="display:flex;align-items:center;gap:12px;color:#14110F"><img src="assets/dex-mark.png" style="width:32px;height:auto"><span style="font-weight:700;font-size:22px">DEX</span></a>
+            <div style="display:flex;align-items:center;gap:26px;font-size:15px;font-weight:600">
+              <a href="#1b" style="color:#14110F" style-hover="color:#8C52FF">A DEX</a>
+              <a href="#1b" style="color:#14110F" style-hover="color:#8C52FF">Impacto</a>
+              <a href="#1b" style="color:#14110F" style-hover="color:#8C52FF">Entrar</a>
+              <a href="#1b" style="color:#F3F0E8;background:#8C52FF;border-radius:100px;padding:10px 22px" style-hover="background:#14110F">Faça parte</a>
+            </div>
+          </div>
+          <!-- content -->
+          <div style="position:absolute;inset:0;display:grid;grid-template-columns:1.35fr .65fr;align-items:center;gap:20px;padding:96px 48px 60px">
+            <div>
+              <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#8C52FF;margin-bottom:18px">// hub de empreendedorismo · UFG</div>
+              <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:112px;line-height:.9;letter-spacing:-.03em;margin:0">Ideias viram<br><span style="color:#8C52FF">gente.</span></h1>
+              <p style="font-size:20px;line-height:1.5;max-width:440px;margin:26px 0 30px;color:rgba(20,17,15,.75)">A DEX é onde a vontade de empreender encontra time. De pessoas, para pessoas.</p>
+              <div style="display:flex;gap:14px">
+                <a href="#1b" style="font-weight:600;font-size:16px;color:#F3F0E8;background:#14110F;border-radius:100px;padding:15px 30px" style-hover="background:#8C52FF">Faça parte</a>
+                <a href="#1b" style="font-weight:600;font-size:16px;color:#14110F;border:1.5px solid rgba(20,17,15,.28);border-radius:100px;padding:15px 30px" style-hover="border-color:#14110F">Conhecer a DEX</a>
+              </div>
+            </div>
+            <!-- impact stack -->
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div style="background:#8C52FF;color:#F3F0E8;border-radius:16px;padding:22px 24px"><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:52px;line-height:1">+150</div><div style="font-size:14px;opacity:.9">membros conectados</div></div>
+              <div style="border:1.5px solid #14110F;border-radius:16px;padding:22px 24px"><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:52px;line-height:1">60+</div><div style="font-size:14px;color:rgba(20,17,15,.7)">projetos tirados do papel</div></div>
+              <div style="border:1.5px solid #14110F;border-radius:16px;padding:22px 24px;display:flex;align-items:center;justify-content:space-between"><div><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:52px;line-height:1">8</div><div style="font-size:14px;color:rgba(20,17,15,.7)">áreas de atuação</div></div><img src="assets/dex-mark.png" style="width:40px;height:auto;opacity:.9"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+      <!-- ===== 3b GROTESCA ===== -->
+    <div class="dv-opt" id="3b">
+      <div class="dv-olabel"><a class="dv-oid" href="#3b">3b</a>Grotesca bold — par da <a class="dv-oid" href="#1b">1b</a></div>
+      <div class="dv-card" style="width:1180px">
+        <div style="height:38px;background:#e7e3da;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid rgba(20,17,15,.09)">
+          <div style="display:flex;gap:6px"><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span></div>
+          <div style="margin:0 auto;font:400 12px 'Space Mono',monospace;color:rgba(20,17,15,.45);background:#f3f0e8;padding:3px 20px;border-radius:20px">dex.ufg.br/entrar</div>
+        </div>
+        <div data-screen-label="Login 3b" style="position:relative;height:648px;display:grid;grid-template-columns:46% 54%;background:#F3F0E8;overflow:hidden">
+          <div style="position:relative;background:#14110F;color:#F3F0E8;padding:40px 44px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden">
+            <div class="tex-halftone" style="position:absolute;inset:0;opacity:.3;pointer-events:none"></div>
+            <a href="#1b" style="position:relative;display:flex;align-items:center;gap:12px;color:#F3F0E8;width:fit-content"><img src="assets/dex-mark-white.png" style="width:30px;height:auto"><span style="font-weight:700;font-size:22px">DEX</span></a>
+            <div style="position:relative">
+              <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#B08CFF;margin-bottom:14px">// área de membros</div>
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:56px;line-height:.95;letter-spacing:-.02em">Bora fazer<br><span style="color:#8C52FF">acontecer.</span></div>
+              <p style="font-size:16px;line-height:1.5;margin:18px 0 0;color:rgba(243,240,232,.7);max-width:320px">Entra pra acompanhar projetos, eventos e a rede DEX.</p>
+            </div>
+            <div style="position:relative;font-family:'Space Mono',monospace;font-size:12px;color:rgba(243,240,232,.55)">+150 membros · 60+ projetos · UFG</div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:center;padding:40px">
+            <div style="width:400px">
+              <div style="display:flex;border:1.5px solid #14110F;border-radius:100px;padding:4px;margin-bottom:30px">
+                <button type="button" onClick="{{ tabLoginB }}" style="flex:1;border:none;border-radius:100px;padding:11px 0;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;background:{{ tlBgB }};color:{{ tlFgB }}">Entrar</button>
+                <button type="button" onClick="{{ tabSignupB }}" style="flex:1;border:none;border-radius:100px;padding:11px 0;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;background:{{ tsBgB }};color:{{ tsFgB }}">Criar conta</button>
+              </div>
+              <form onSubmit="{{ submitB }}" style="display:flex;flex-direction:column;gap:14px">
+                <sc-if value="{{ signupB }}"><input name="nome" placeholder="Nome completo" style="font-family:'Space Grotesk',sans-serif;font-size:16px;background:#faf8f3;border:1.5px solid rgba(20,17,15,.25);border-radius:13px;padding:15px 18px;color:#14110F;outline:none" style-focus="border-color:#8C52FF"></sc-if>
+                <input name="email" placeholder="Email" style="font-family:'Space Grotesk',sans-serif;font-size:16px;background:#faf8f3;border:1.5px solid rgba(20,17,15,.25);border-radius:13px;padding:15px 18px;color:#14110F;outline:none" style-focus="border-color:#8C52FF">
+                <div style="position:relative;display:flex">
+                  <input name="senha" type="{{ pwTypeB }}" placeholder="Senha" style="flex:1;font-family:'Space Grotesk',sans-serif;font-size:16px;background:#faf8f3;border:1.5px solid rgba(20,17,15,.25);border-radius:13px;padding:15px 92px 15px 18px;color:#14110F;outline:none" style-focus="border-color:#8C52FF">
+                  <button type="button" onClick="{{ togglePwB }}" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-family:'Space Mono',monospace;font-size:12px;color:rgba(20,17,15,.55)" style-hover="color:#8C52FF">{{ pwLabelB }}</button>
+                </div>
+                <sc-if value="{{ errB }}"><div style="font-size:13.5px;color:#B3261E">{{ errB }}</div></sc-if>
+                <button type="submit" style="margin-top:8px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;color:#F3F0E8;background:#8C52FF;border:none;border-radius:100px;padding:16px;cursor:pointer" style-hover="background:#14110F">{{ ctaB }}</button>
+              </form>
+              <div style="margin-top:18px;text-align:center;font-size:13px;color:rgba(20,17,15,.5)">Esqueceu a senha? <a href="#3b" style="color:#8C52FF;font-weight:600" style-hover="color:#5B29C7">Recuperar</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:flex-start">
+      <!-- ============ 1c ISOMÉTRICO ============ -->
+    <div class="dv-opt" id="1c">
+      <div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Isométrico / blueprint — puxa a geometria do cubo</div>
+      <div class="dv-card" style="width:1180px">
+        <div style="height:38px;background:#e7e3da;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid rgba(20,17,15,.09)">
+          <div style="display:flex;gap:6px"><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span></div>
+          <div style="margin:0 auto;font:400 12px 'Space Mono',monospace;color:rgba(20,17,15,.45);background:#f3f0e8;padding:3px 20px;border-radius:20px">dex.ufg.br</div>
+        </div>
+        <div data-screen-label="Home 1c" style="position:relative;height:648px;background:#F3F0E8;overflow:hidden;color:#14110F">
+          <div class="tex-iso" style="position:absolute;inset:0;pointer-events:none"></div>
+          <!-- header -->
+          <div style="position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:24px 46px;z-index:6">
+            <a href="#1c" style="display:flex;align-items:center;gap:12px;color:#14110F"><img src="assets/dex-mark.png" style="width:32px;height:auto"><span style="font-weight:700;font-size:22px">DEX</span></a>
+            <div style="display:flex;align-items:center;gap:28px;font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.04em">
+              <a href="#1c" style="color:#14110F" style-hover="color:#8C52FF">A_DEX</a>
+              <a href="#1c" style="color:#14110F" style-hover="color:#8C52FF">IMPACTO</a>
+              <a href="#1c" style="color:#F3F0E8;background:#14110F;padding:9px 20px" style-hover="background:#8C52FF">ENTRAR</a>
+            </div>
+          </div>
+          <!-- content -->
+          <div style="position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:70px 46px 40px">
+            <!-- big mark w/ ticks -->
+            <div style="position:relative;display:flex;align-items:center;justify-content:center;height:100%">
+              <div style="position:absolute;top:24%;left:6%;font-family:'Space Mono',monospace;font-size:11px;color:rgba(140,82,255,.9)">+ 45.0°</div>
+              <div style="position:absolute;bottom:20%;right:8%;font-family:'Space Mono',monospace;font-size:11px;color:rgba(20,17,15,.4)">x: 8C52FF</div>
+              <div style="position:absolute;top:50%;left:0;width:100%;height:1px;background:repeating-linear-gradient(90deg,rgba(20,17,15,.3) 0 6px,transparent 6px 12px)"></div>
+              <div style="position:absolute;top:0;left:50%;width:1px;height:100%;background:repeating-linear-gradient(0deg,rgba(20,17,15,.3) 0 6px,transparent 6px 12px)"></div>
+              <img src="assets/dex-mark.png" style="position:relative;width:290px;height:auto;filter:drop-shadow(0 18px 30px rgba(140,82,255,.35));animation:floaty 6s ease-in-out infinite">
+            </div>
+            <!-- text -->
+            <div>
+              <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.14em;color:rgba(20,17,15,.55);margin-bottom:22px">EST. 2015 — UFG / GOIÂNIA</div>
+              <h1 style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:60px;line-height:1.02;letter-spacing:-.02em;margin:0">Empreendedorismo é<br><span style="color:#8C52FF">construção coletiva.</span></h1>
+              <p style="font-size:18px;line-height:1.55;max-width:430px;margin:24px 0 30px;color:rgba(20,17,15,.72)">A DEX é o canteiro de quem faz acontecer na UFG. Peça por peça, de pessoas para pessoas.</p>
+              <a href="#1c" style="display:inline-flex;align-items:center;gap:10px;font-family:'Space Mono',monospace;font-size:14px;color:#F3F0E8;background:#8C52FF;padding:14px 26px;border-radius:4px" style-hover="background:#14110F">FAÇA PARTE →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+      <!-- ===== 3c ISOMÉTRICO ===== -->
+    <div class="dv-opt" id="3c">
+      <div class="dv-olabel"><a class="dv-oid" href="#3c">3c</a>Isométrico / blueprint — par da <a class="dv-oid" href="#1c">1c</a></div>
+      <div class="dv-card" style="width:1180px">
+        <div style="height:38px;background:#e7e3da;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid rgba(20,17,15,.09)">
+          <div style="display:flex;gap:6px"><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span></div>
+          <div style="margin:0 auto;font:400 12px 'Space Mono',monospace;color:rgba(20,17,15,.45);background:#f3f0e8;padding:3px 20px;border-radius:20px">dex.ufg.br/entrar</div>
+        </div>
+        <div data-screen-label="Login 3c" style="position:relative;height:648px;background:#F3F0E8;overflow:hidden;color:#14110F">
+          <div class="tex-iso" style="position:absolute;inset:0;pointer-events:none"></div>
+          <div style="position:absolute;top:24px;left:46px;z-index:6"><a href="#1c" style="display:flex;align-items:center;gap:12px;color:#14110F"><img src="assets/dex-mark.png" style="width:32px;height:auto"><span style="font-weight:700;font-size:22px">DEX</span></a></div>
+          <div style="position:absolute;top:30px;right:46px;font-family:'Space Mono',monospace;font-size:11px;color:rgba(20,17,15,.45)">/entrar · v1.0</div>
+          <div style="position:absolute;bottom:26px;left:46px;font-family:'Space Mono',monospace;font-size:11px;color:rgba(140,82,255,.9)">+ 45.0°</div>
+          <div style="position:absolute;bottom:26px;right:46px;font-family:'Space Mono',monospace;font-size:11px;color:rgba(20,17,15,.4)">x: 8C52FF</div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+            <div style="width:440px;background:#FAF8F3;border:1.5px solid #14110F;box-shadow:8px 8px 0 rgba(140,82,255,.85)">
+              <div style="display:flex;align-items:center;justify-content:space-between;background:#14110F;color:#F3F0E8;padding:12px 18px">
+                <span style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.08em">ACESSO_MEMBROS</span>
+                <span style="width:10px;height:10px;background:#8C52FF;animation:dv-blink 1.2s step-end infinite"></span>
+              </div>
+              <form onSubmit="{{ submitC }}" style="display:flex;flex-direction:column;gap:16px;padding:28px 30px 24px">
+                <sc-if value="{{ signupC }}">
+                  <div style="display:flex;flex-direction:column;gap:6px">
+                    <label style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;color:rgba(20,17,15,.55)">NOME</label>
+                    <input name="nome" placeholder="seu nome" style="font-family:'Space Grotesk',sans-serif;font-size:16px;background:transparent;border:1px solid #14110F;border-radius:0;padding:12px 14px;color:#14110F;outline:none" style-focus="border-color:#8C52FF;box-shadow:0 0 0 1px #8C52FF">
+                  </div>
+                </sc-if>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <label style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;color:rgba(20,17,15,.55)">EMAIL</label>
+                  <input name="email" placeholder="voce@email.com" style="font-family:'Space Grotesk',sans-serif;font-size:16px;background:transparent;border:1px solid #14110F;border-radius:0;padding:12px 14px;color:#14110F;outline:none" style-focus="border-color:#8C52FF;box-shadow:0 0 0 1px #8C52FF">
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <label style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;color:rgba(20,17,15,.55)">SENHA</label>
+                  <div style="position:relative;display:flex">
+                    <input name="senha" type="{{ pwTypeC }}" placeholder="••••••" style="flex:1;font-family:'Space Grotesk',sans-serif;font-size:16px;background:transparent;border:1px solid #14110F;border-radius:0;padding:12px 92px 12px 14px;color:#14110F;outline:none" style-focus="border-color:#8C52FF;box-shadow:0 0 0 1px #8C52FF">
+                    <button type="button" onClick="{{ togglePwC }}" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.06em;color:rgba(20,17,15,.55)" style-hover="color:#8C52FF">{{ pwLabelC }}</button>
+                  </div>
+                </div>
+                <sc-if value="{{ errC }}"><div style="font-family:'Space Mono',monospace;font-size:12px;color:#B3261E">! {{ errC }}</div></sc-if>
+                <button type="submit" style="margin-top:6px;font-family:'Space Mono',monospace;font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#F3F0E8;background:#8C52FF;border:none;border-radius:0;padding:15px;cursor:pointer" style-hover="background:#14110F">{{ ctaC }} →</button>
+                <button type="button" onClick="{{ toggleModeC }}" style="background:none;border:none;cursor:pointer;font-family:'Space Mono',monospace;font-size:12px;color:rgba(20,17,15,.6);text-decoration:underline;text-underline-offset:3px;padding:2px" style-hover="color:#8C52FF">{{ toggleLabelC }}</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:flex-start">
+      <!-- ============ 1d ROXO PROTAGONISTA ============ -->
+    <div class="dv-opt" id="1d">
+      <div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a>Roxo protagonista — poster com textura riso (sem gradiente)</div>
+      <div class="dv-card" style="width:1180px">
+        <div style="height:38px;background:#e7e3da;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid rgba(20,17,15,.09)">
+          <div style="display:flex;gap:6px"><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span></div>
+          <div style="margin:0 auto;font:400 12px 'Space Mono',monospace;color:rgba(20,17,15,.45);background:#f3f0e8;padding:3px 20px;border-radius:20px">dex.ufg.br</div>
+        </div>
+        <div data-screen-label="Home 1d" style="position:relative;height:648px;background:#6A34E8;overflow:hidden;color:#F3F0E8">
+          <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(20,17,15,.28) 1.4px,transparent 1.6px);background-size:15px 15px;opacity:.55;pointer-events:none"></div>
+          <div class="tex-grain" style="position:absolute;inset:0;opacity:.5;mix-blend-mode:overlay;pointer-events:none"></div>
+          <!-- header -->
+          <div style="position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:26px 48px;z-index:6">
+            <a href="#1d" style="display:flex;align-items:center;gap:12px;color:#F3F0E8"><img src="assets/dex-mark-white.png" style="width:30px;height:auto"><span style="font-weight:700;font-size:22px">DEX</span></a>
+            <div style="display:flex;align-items:center;gap:28px;font-size:15px;font-weight:600">
+              <a href="#1d" style="color:#F3F0E8" style-hover="opacity:.7">A DEX</a>
+              <a href="#1d" style="color:#F3F0E8" style-hover="opacity:.7">Impacto</a>
+              <a href="#1d" style="color:#14110F;background:#F3F0E8;border-radius:100px;padding:10px 24px" style-hover="background:#14110F;color:#F3F0E8">Entrar</a>
+            </div>
+          </div>
+          <!-- hero -->
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px">
+            <div style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.34em;text-transform:uppercase;margin-bottom:6px;opacity:.85">Hub de empreendedorismo · UFG</div>
+            <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:300px;line-height:.82;margin:0;letter-spacing:-.03em;text-shadow:10px 10px 0 #14110F">DEX</h1>
+            <div style="position:relative;margin-top:26px">
+              <p style="font-family:'Young Serif',serif;font-size:40px;margin:0;line-height:1">De pessoas. Para pessoas.</p>
+              <!-- hand-drawn oval accent -->
+              <div style="position:absolute;top:-14px;left:-30px;right:-30px;bottom:-14px;border:3px solid #14110F;border-radius:50%;transform:rotate(-3deg);opacity:.85"></div>
+            </div>
+          </div>
+          <!-- small mascot -->
+          <div style="position:absolute;left:56px;bottom:44px;z-index:4;width:98px;height:122px;animation:floaty2 5s ease-in-out infinite"><dc-import name="DexMascot" tone="light" eyes="one" hint-size="98px,122px" style="display:block;width:98px;height:122px"></dc-import></div>
+        </div>
+      </div>
+    </div>
+      <!-- ===== 3d ROXO + BLUR ===== -->
+    <div class="dv-opt" id="3d">
+      <div class="dv-olabel"><a class="dv-oid" href="#3d">3d</a>Roxo protagonista + card em blur — par da <a class="dv-oid" href="#1d">1d</a></div>
+      <div class="dv-card" style="width:1180px">
+        <div style="height:38px;background:#e7e3da;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid rgba(20,17,15,.09)">
+          <div style="display:flex;gap:6px"><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span></div>
+          <div style="margin:0 auto;font:400 12px 'Space Mono',monospace;color:rgba(20,17,15,.45);background:#f3f0e8;padding:3px 20px;border-radius:20px">dex.ufg.br/entrar</div>
+        </div>
+        <div data-screen-label="Login 3d" style="position:relative;height:648px;background:#6A34E8;overflow:hidden;color:#F3F0E8">
+          <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(20,17,15,.28) 1.4px,transparent 1.6px);background-size:15px 15px;opacity:.55;pointer-events:none"></div>
+          <div class="tex-grain" style="position:absolute;inset:0;opacity:.5;mix-blend-mode:overlay;pointer-events:none"></div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none"><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:430px;line-height:1;letter-spacing:-.03em;color:rgba(20,17,15,.16);user-select:none">DEX</span></div>
+          <div style="position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:26px 48px;z-index:6">
+            <a href="#1d" style="display:flex;align-items:center;gap:12px;color:#F3F0E8"><img src="assets/dex-mark-white.png" style="width:30px;height:auto"><span style="font-weight:700;font-size:22px">DEX</span></a>
+            <a href="#1d" style="font-size:14px;font-weight:600;color:#F3F0E8" style-hover="opacity:.7">← voltar ao site</a>
+          </div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:4">
+            <div style="width:420px;background:rgba(243,240,232,.12);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);border:1px solid rgba(243,240,232,.35);border-radius:22px;padding:36px 38px;box-shadow:0 30px 60px -20px rgba(20,17,15,.45)">
+              <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:rgba(243,240,232,.75);margin-bottom:8px">Área de membros</div>
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:32px;letter-spacing:-.01em;margin-bottom:26px">De pessoas. Para pessoas.</div>
+              <form onSubmit="{{ submitD }}" style="display:flex;flex-direction:column;gap:13px">
+                <sc-if value="{{ signupD }}"><input name="nome" placeholder="Nome completo" class="dv-glass-in" style="font-family:'Space Grotesk',sans-serif;font-size:15.5px;background:rgba(243,240,232,.14);border:1px solid rgba(243,240,232,.32);border-radius:13px;padding:14px 16px;color:#F3F0E8;caret-color:#F3F0E8;outline:none" style-focus="border-color:rgba(243,240,232,.85);background:rgba(243,240,232,.2)"></sc-if>
+                <input name="email" placeholder="Email" class="dv-glass-in" style="font-family:'Space Grotesk',sans-serif;font-size:15.5px;background:rgba(243,240,232,.14);border:1px solid rgba(243,240,232,.32);border-radius:13px;padding:14px 16px;color:#F3F0E8;caret-color:#F3F0E8;outline:none" style-focus="border-color:rgba(243,240,232,.85);background:rgba(243,240,232,.2)">
+                <div style="position:relative;display:flex">
+                  <input name="senha" type="{{ pwTypeD }}" placeholder="Senha" class="dv-glass-in" style="flex:1;font-family:'Space Grotesk',sans-serif;font-size:15.5px;background:rgba(243,240,232,.14);border:1px solid rgba(243,240,232,.32);border-radius:13px;padding:14px 88px 14px 16px;color:#F3F0E8;caret-color:#F3F0E8;outline:none" style-focus="border-color:rgba(243,240,232,.85);background:rgba(243,240,232,.2)">
+                  <button type="button" onClick="{{ togglePwD }}" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-family:'Space Mono',monospace;font-size:12px;color:rgba(243,240,232,.75)" style-hover="color:#fff">{{ pwLabelD }}</button>
+                </div>
+                <sc-if value="{{ errD }}"><div style="font-size:13px;color:#FFD7D3;background:rgba(20,17,15,.3);border-radius:9px;padding:9px 12px">{{ errD }}</div></sc-if>
+                <button type="submit" style="margin-top:8px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;color:#F3F0E8;background:#14110F;border:none;border-radius:100px;padding:15px;cursor:pointer" style-hover="background:#F3F0E8;color:#14110F">{{ ctaD }}</button>
+              </form>
+              <button type="button" onClick="{{ toggleModeD }}" style="margin-top:18px;width:100%;background:none;border:none;cursor:pointer;font-size:13.5px;color:rgba(243,240,232,.85);text-decoration:underline;text-underline-offset:3px" style-hover="color:#fff">{{ toggleLabelD }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:flex-start">
+      <!-- ============ 1e PERSONAGEM / LÚDICO ============ -->
+    <div class="dv-opt" id="1e">
+      <div class="dv-olabel"><a class="dv-oid" href="#1e">1e</a>Personagem — o mais lúdico, mascote no centro</div>
+      <div class="dv-card" style="width:1180px">
+        <div style="height:38px;background:#e7e3da;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid rgba(20,17,15,.09)">
+          <div style="display:flex;gap:6px"><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span></div>
+          <div style="margin:0 auto;font:400 12px 'Space Mono',monospace;color:rgba(20,17,15,.45);background:#f3f0e8;padding:3px 20px;border-radius:20px">dex.ufg.br</div>
+        </div>
+        <div data-screen-label="Home 1e" style="position:relative;height:648px;background:#F3F0E8;overflow:hidden;color:#14110F">
+          <div class="tex-grain" style="position:absolute;inset:0;opacity:.4;mix-blend-mode:multiply;pointer-events:none"></div>
+          <!-- people dots -->
+          <div style="position:absolute;top:120px;left:120px;width:20px;height:20px;border-radius:50%;background:#8C52FF"></div>
+          <div style="position:absolute;top:200px;left:230px;width:14px;height:14px;border-radius:50%;border:2.5px solid #14110F"></div>
+          <div style="position:absolute;top:150px;right:180px;width:26px;height:26px;border-radius:50%;background:#14110F"></div>
+          <div style="position:absolute;top:260px;right:120px;width:16px;height:16px;border-radius:50%;background:#8C52FF"></div>
+          <div style="position:absolute;bottom:120px;left:180px;width:22px;height:22px;border-radius:50%;border:2.5px solid #8C52FF"></div>
+          <div style="position:absolute;bottom:160px;right:220px;width:18px;height:18px;border-radius:50%;background:#14110F"></div>
+          <div style="position:absolute;bottom:90px;right:120px;width:13px;height:13px;border-radius:50%;background:#8C52FF"></div>
+          <div style="position:absolute;top:340px;left:120px;width:15px;height:15px;border-radius:50%;background:#14110F"></div>
+          <!-- header -->
+          <div style="position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:26px 48px;z-index:6">
+            <a href="#1e" style="display:flex;align-items:center;gap:12px;color:#14110F"><img src="assets/dex-mark.png" style="width:32px;height:auto"><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:24px">DEX</span></a>
+            <div style="display:flex;align-items:center;gap:26px;font-size:15px;font-weight:600">
+              <a href="#1e" style="color:#14110F" style-hover="color:#8C52FF">A DEX</a>
+              <a href="#1e" style="color:#14110F" style-hover="color:#8C52FF">Impacto</a>
+              <a href="#1e" style="color:#F3F0E8;background:#8C52FF;border-radius:100px;padding:10px 22px" style-hover="background:#14110F">Entrar</a>
+            </div>
+          </div>
+          <!-- center stage -->
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:30px">
+            <!-- speech bubble -->
+            <div style="position:relative;background:#14110F;color:#F3F0E8;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;padding:11px 18px;border-radius:14px;margin-bottom:20px;white-space:nowrap">oi! a gente empreende de pessoas, para pessoas
+              <div style="position:absolute;bottom:-8px;left:50%;transform:translateX(-50%) rotate(45deg);width:16px;height:16px;background:#14110F"></div>
+            </div>
+            <!-- mascot -->
+            <div style="position:relative;width:206px;height:250px;animation:floaty 4.5s ease-in-out infinite"><dc-import name="DexMascot" tone="purple" eyes="one" hint-size="206px,250px" style="display:block;width:206px;height:250px"></dc-import></div>
+            <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:76px;line-height:.95;letter-spacing:-.03em;margin:26px 0 0;text-align:center">Gente que empreende<br>com gente.</h1>
+          </div>
+          <!-- sticker badge -->
+          <div style="position:absolute;right:70px;bottom:70px;z-index:5;font-family:'Space Mono',monospace;font-weight:700;font-size:13px;letter-spacing:.06em;color:#F3F0E8;background:#8C52FF;padding:12px 18px;border-radius:100px;transform:rotate(-7deg);box-shadow:0 6px 0 #14110F">★ HUB DE EMPREENDEDORISMO · UFG</div>
+        </div>
+      </div>
+    </div>
+      <!-- ===== 3e LÚDICO ===== -->
+    <div class="dv-opt" id="3e">
+      <div class="dv-olabel"><a class="dv-oid" href="#3e">3e</a>Lúdico — par da <a class="dv-oid" href="#1e">1e</a></div>
+      <div class="dv-card" style="width:1180px">
+        <div style="height:38px;background:#e7e3da;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid rgba(20,17,15,.09)">
+          <div style="display:flex;gap:6px"><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span><span style="width:11px;height:11px;border-radius:50%;background:#d6d1c6"></span></div>
+          <div style="margin:0 auto;font:400 12px 'Space Mono',monospace;color:rgba(20,17,15,.45);background:#f3f0e8;padding:3px 20px;border-radius:20px">dex.ufg.br/entrar</div>
+        </div>
+        <div data-screen-label="Login 3e" style="position:relative;height:648px;background:#F3F0E8;overflow:hidden;color:#14110F">
+          <div class="tex-grain" style="position:absolute;inset:0;opacity:.4;mix-blend-mode:multiply;pointer-events:none"></div>
+          <div style="position:absolute;top:120px;left:130px;width:20px;height:20px;border-radius:50%;background:#8C52FF"></div>
+          <div style="position:absolute;top:230px;left:250px;width:14px;height:14px;border-radius:50%;border:2.5px solid #14110F"></div>
+          <div style="position:absolute;top:150px;right:180px;width:26px;height:26px;border-radius:50%;background:#14110F"></div>
+          <div style="position:absolute;top:300px;right:120px;width:16px;height:16px;border-radius:50%;background:#8C52FF"></div>
+          <div style="position:absolute;bottom:130px;left:190px;width:22px;height:22px;border-radius:50%;border:2.5px solid #8C52FF"></div>
+          <div style="position:absolute;bottom:170px;right:230px;width:18px;height:18px;border-radius:50%;background:#14110F"></div>
+          <div style="position:absolute;bottom:90px;right:130px;width:13px;height:13px;border-radius:50%;background:#8C52FF"></div>
+          <div style="position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:26px 48px;z-index:6">
+            <a href="#1e" style="display:flex;align-items:center;gap:12px;color:#14110F"><img src="assets/dex-mark.png" style="width:32px;height:auto"><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:24px">DEX</span></a>
+            <a href="#1e" style="font-size:14px;font-weight:600;color:#14110F" style-hover="color:#8C52FF">← voltar ao site</a>
+          </div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:4">
+            <div style="position:relative;width:430px;background:#FAF8F3;border:2.5px solid #14110F;border-radius:22px;box-shadow:10px 10px 0 #14110F;padding:36px 38px">
+              <div style="position:absolute;top:-18px;right:-34px;font-family:'Space Mono',monospace;font-weight:700;font-size:12px;letter-spacing:.06em;color:#F3F0E8;background:#8C52FF;padding:10px 16px;border-radius:100px;transform:rotate(6deg);box-shadow:4px 4px 0 #14110F">★ ÁREA DE MEMBROS</div>
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:38px;letter-spacing:-.02em;line-height:1;margin-bottom:8px">e aí! bora entrar?</div>
+              <p style="font-size:15px;color:rgba(20,17,15,.65);margin:0 0 24px">a casa é sua — de pessoas, para pessoas.</p>
+              <form onSubmit="{{ submitE }}" style="display:flex;flex-direction:column;gap:13px">
+                <sc-if value="{{ signupE }}"><input name="nome" placeholder="teu nome" style="font-family:'Space Grotesk',sans-serif;font-size:16px;background:#fff;border:2px solid #14110F;border-radius:14px;padding:13px 16px;color:#14110F;outline:none" style-focus="border-color:#8C52FF;box-shadow:3px 3px 0 #8C52FF"></sc-if>
+                <input name="email" placeholder="teu email" style="font-family:'Space Grotesk',sans-serif;font-size:16px;background:#fff;border:2px solid #14110F;border-radius:14px;padding:13px 16px;color:#14110F;outline:none" style-focus="border-color:#8C52FF;box-shadow:3px 3px 0 #8C52FF">
+                <div style="position:relative;display:flex">
+                  <input name="senha" type="{{ pwTypeE }}" placeholder="tua senha" style="flex:1;font-family:'Space Grotesk',sans-serif;font-size:16px;background:#fff;border:2px solid #14110F;border-radius:14px;padding:13px 92px 13px 16px;color:#14110F;outline:none" style-focus="border-color:#8C52FF;box-shadow:3px 3px 0 #8C52FF">
+                  <button type="button" onClick="{{ togglePwE }}" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:rgba(20,17,15,.55)" style-hover="color:#8C52FF">{{ pwLabelE }}</button>
+                </div>
+                <sc-if value="{{ errE }}"><div style="font-size:13.5px;font-weight:600;color:#B3261E">{{ errE }}</div></sc-if>
+                <button type="submit" style="margin-top:8px;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:17px;color:#F3F0E8;background:#8C52FF;border:2px solid #14110F;border-radius:14px;padding:14px;cursor:pointer;box-shadow:6px 6px 0 #14110F" style-hover="transform:translate(2px,2px);box-shadow:4px 4px 0 #14110F" style-active="transform:translate(6px,6px);box-shadow:0 0 0 #14110F">{{ ctaE }}</button>
+              </form>
+              <button type="button" onClick="{{ toggleModeE }}" style="margin-top:18px;width:100%;background:none;border:none;cursor:pointer;font-size:14px;font-weight:700;color:#14110F;text-decoration:underline;text-underline-offset:3px" style-hover="color:#8C52FF">{{ toggleLabelE }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+  <p class="dv-next">Diga: “leva a <a class="dv-oid" href="#3d">3d</a> pra frente” · “quero a <a class="dv-oid" href="#3a">3a</a> com o card em blur da <a class="dv-oid" href="#3d">3d</a>” · “cadastro em página separada” · “agora com animação no fundo”.</p>
+</section>
+
+<!-- ===================== TURN 2 (MASCOTE) ===================== -->
+<section class="dv-turn" id="t2">
+  <div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Mascote — a nova pirâmide DEX</span></div>
+  <p style="max-width:700px;margin:-8px 0 22px;font-size:15px;line-height:1.55;color:rgba(20,17,15,.72)">Pirâmide com braços e pernas (o espírito do personagem que você mandou), mas 100% nossa: sem cartola nem laço, e com a aresta central que puxa a geometria do cubo do logo. Escolha os <strong>olhos</strong> — e, se quiser, deixo a pirâmide <em>lisa</em> (uma cor só, sem aresta).</p>
+  <div class="dv-opts">
+    <div class="dv-opt" id="2a">
+      <div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Um olho — o mais próximo do original</div>
+      <div class="dv-card" style="display:flex;padding:0">
+        <div style="width:196px;height:240px;background:#F3F0E8;display:flex;align-items:center;justify-content:center"><div style="width:150px;height:188px"><dc-import name="DexMascot" tone="purple" eyes="one" hint-size="150px,188px" style="display:block;width:150px;height:188px"></dc-import></div></div>
+        <div style="width:196px;height:240px;background:#6A34E8;display:flex;align-items:center;justify-content:center"><div style="width:150px;height:188px"><dc-import name="DexMascot" tone="light" eyes="one" hint-size="150px,188px" style="display:block;width:150px;height:188px"></dc-import></div></div>
+      </div>
+    </div>
+    <div class="dv-opt" id="2b">
+      <div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>Dois olhos — mais fofo/amigável</div>
+      <div class="dv-card" style="display:flex;padding:0">
+        <div style="width:196px;height:240px;background:#F3F0E8;display:flex;align-items:center;justify-content:center"><div style="width:150px;height:188px"><dc-import name="DexMascot" tone="purple" eyes="two" hint-size="150px,188px" style="display:block;width:150px;height:188px"></dc-import></div></div>
+        <div style="width:196px;height:240px;background:#6A34E8;display:flex;align-items:center;justify-content:center"><div style="width:150px;height:188px"><dc-import name="DexMascot" tone="light" eyes="two" hint-size="150px,188px" style="display:block;width:150px;height:188px"></dc-import></div></div>
+      </div>
+    </div>
+    <div class="dv-opt" id="2c">
+      <div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>Olho sorridente — o mais lúdico</div>
+      <div class="dv-card" style="display:flex;padding:0">
+        <div style="width:196px;height:240px;background:#F3F0E8;display:flex;align-items:center;justify-content:center"><div style="width:150px;height:188px"><dc-import name="DexMascot" tone="purple" eyes="happy" hint-size="150px,188px" style="display:block;width:150px;height:188px"></dc-import></div></div>
+        <div style="width:196px;height:240px;background:#6A34E8;display:flex;align-items:center;justify-content:center"><div style="width:150px;height:188px"><dc-import name="DexMascot" tone="light" eyes="happy" hint-size="150px,188px" style="display:block;width:150px;height:188px"></dc-import></div></div>
+      </div>
+    </div>
+  </div>
+  <p class="dv-next">Diga: “curti o <a class="dv-oid" href="#2a">2a</a>” · “prefiro dois olhos (<a class="dv-oid" href="#2b">2b</a>)” · “deixa a pirâmide lisa” · “muda a cor / postura”. Os exemplos de Home abaixo já usam o mascote de <strong>um olho</strong>.</p>
+</section>
+
+
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { m:{a:true,b:true,c:true,d:true,e:true}, pw:{}, err:{}, ok:{} };
+  submit(id, e) {
+    e.preventDefault();
+    const f = e.target, login = this.state.m[id];
+    const nome = login ? 'x' : ((f.elements.nome && f.elements.nome.value) || '').trim();
+    const email = ((f.elements.email && f.elements.email.value) || '').trim();
+    const senha = (f.elements.senha && f.elements.senha.value) || '';
+    let err = '';
+    if (!nome) err = 'falta seu nome ali em cima';
+    else if (!/^\S+@\S+\.\S+$/.test(email)) err = 'esse email não parece válido';
+    else if (senha.length < 6) err = 'a senha precisa de 6+ caracteres';
+    this.setState(s => ({ err:{...s.err,[id]:err}, ok:{...s.ok,[id]:!err} }));
+    if (!err) {
+      this._t = this._t || {};
+      clearTimeout(this._t[id]);
+      this._t[id] = setTimeout(() => this.setState(s => ({ ok:{...s.ok,[id]:false} })), 2600);
+    }
+  }
+  renderVals() {
+    const V = {};
+    ['a','b','c','d','e'].forEach(id => {
+      const U = id.toUpperCase();
+      const login = this.state.m[id], ok = this.state.ok[id];
+      V['login'+U] = login;
+      V['signup'+U] = !login;
+      V['pwType'+U] = this.state.pw[id] ? 'text' : 'password';
+      V['pwLabel'+U] = this.state.pw[id] ? 'ocultar' : 'mostrar';
+      V['err'+U] = this.state.err[id] || '';
+      V['cta'+U] = ok ? '✓ tudo certo!' : (login ? 'Entrar' : 'Criar conta');
+      V['toggleLabel'+U] = login ? 'Novo por aqui? Criar conta →' : 'Já é membro? Entrar →';
+      V['toggleMode'+U] = () => this.setState(s => ({ m:{...s.m,[id]:!s.m[id]}, err:{...s.err,[id]:''}, ok:{...s.ok,[id]:false} }));
+      V['togglePw'+U] = () => this.setState(s => ({ pw:{...s.pw,[id]:!s.pw[id]} }));
+      V['submit'+U] = (e) => this.submit(id, e);
+    });
+    const setB = (v) => () => this.setState(s => ({ m:{...s.m,b:v}, err:{...s.err,b:''}, ok:{...s.ok,b:false} }));
+    V.tabLoginB = setB(true);
+    V.tabSignupB = setB(false);
+    V.tlBgB = V.loginB ? '#14110F' : 'transparent';
+    V.tlFgB = V.loginB ? '#F3F0E8' : '#14110F';
+    V.tsBgB = V.signupB ? '#14110F' : 'transparent';
+    V.tsFgB = V.signupB ? '#F3F0E8' : '#14110F';
+    return V;
+  }
+}
+</script>
+</body>
+</html>

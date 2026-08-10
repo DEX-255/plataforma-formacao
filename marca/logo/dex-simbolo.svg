@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 224" fill="currentColor" role="img" aria-label="DEX">
+  <title>DEX</title>
+  <!--
+    Símbolo da DEX — redesenho vetorial do original.
+
+    Não é uma reinterpretação: a geometria foi medida pixel a pixel do
+    dex-simbolo-fundo-preto.png e reexpressa como polígonos exatos. O que muda é
+    só a forma de escrever — antes eram curvas de Bézier trêmulas de um traço
+    automático (VTracer), com três roxos diferentes e sem viewBox.
+
+    A construção do original, que o redesenho preserva:
+      · hexágono de topo pontudo, raio 112, traço de 28
+      · seis peças, todas separadas por folgas de exatamente 20
+      · os cortes da moldura são biseis a 30°, paralelos às arestas vizinhas
+      · cubo isométrico ao centro, três faces, mesmas folgas de 20
+
+    Cor em currentColor de propósito: o símbolo recolore por contexto — roxo
+    sobre fundo escuro, papel dentro de preenchimento, preto sobre papel.
+  -->
+
+  <!-- moldura: chevron superior -->
+  <path d="M23.5 51.5 112 0l88.5 51.5-28 16L112 32 51.5 67.5Z"/>
+
+  <!-- moldura: lateral esquerda e diagonal inferior esquerda -->
+  <path d="M15 69.5V168l87 56v-32l-59.5-40V86Z"/>
+
+  <!-- moldura: lateral direita e diagonal inferior direita -->
+  <path d="M209 69.5V168l-87 56v-32l59.5-40V86Z"/>
+
+  <!-- cubo: face superior esquerda -->
+  <path d="M101.5 61.5 61.5 84.5v48l40-23Z"/>
+
+  <!-- cubo: face superior direita -->
+  <path d="M122.5 61.5l40 23v48l-40-23Z"/>
+
+  <!-- cubo: face inferior -->
+  <path d="M112 126.5l40.5 23L112 173.5 71.5 149.5Z"/>
+</svg>

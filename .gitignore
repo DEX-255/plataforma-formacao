@@ -1,0 +1,34 @@
+# dependências
+node_modules/
+.pnp
+.pnp.*
+
+# build
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+next-env.d.ts
+
+# variáveis de ambiente
+# Nunca versionar. A service_role do Supabase ignora RLS (D-07) e um .env
+# vazado aqui expõe nota e observação interna de todo mundo.
+.env
+.env.*
+!.env.example
+
+# supabase local
+supabase/.temp/
+supabase/.branches/
+
+# documentos finais gerados — dado de pessoa real, nunca no repositório
+documento/saida/
+
+# testes
+coverage/
+
+# sistema
+.DS_Store
+*.pem
+.vercel
