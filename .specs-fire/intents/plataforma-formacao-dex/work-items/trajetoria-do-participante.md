@@ -4,9 +4,12 @@ title: Trajetória do participante
 intent: plataforma-formacao-dex
 complexity: medium
 mode: confirm
-status: pending
-depends_on: [registrar-feedback]
+status: completed
+depends_on:
+  - registrar-feedback
 created: 2026-08-06T00:26:01Z
+run_id: run-dex-007
+completed_at: 2026-08-11T16:30:56.739Z
 ---
 
 # Work Item: Trajetória do participante

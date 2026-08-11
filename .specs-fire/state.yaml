@@ -84,11 +84,13 @@ intents:
         completed_at: 2026-08-11T14:18:54.131Z
       - id: trajetoria-do-participante
         title: Trajetória do participante
-        status: pending
+        status: completed
         complexity: medium
         mode: confirm
         depends_on:
           - registrar-feedback
+        run_id: run-dex-007
+        completed_at: 2026-08-11T16:30:56.739Z
       - id: presenca
         title: Presença por encontro
         status: pending
@@ -199,3 +201,11 @@ runs:
           mode: validate
       started: 2026-08-11T13:48:18.223Z
       completed: 2026-08-11T14:18:54.131Z
+    - id: run-dex-007
+      scope: single
+      work_items:
+        - id: trajetoria-do-participante
+          intent: plataforma-formacao-dex
+          mode: confirm
+      started: 2026-08-11T16:30:56.637Z
+      completed: 2026-08-11T16:30:56.739Z

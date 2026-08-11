@@ -18,7 +18,7 @@ estado em que ele vai ser usado.
    principal do mentor, e metade dos defeitos encontrados até aqui só aparecia lá.
 
 > **O que NÃO está aqui:** o que a suíte automatizada já prova. Ver a seção
-> *O que a suíte já garante* no fim — não vale repetir à mão o que 239 testes
+> *O que a suíte já garante* no fim — não vale repetir à mão o que 266 testes
 > conferem a cada `npm test`.
 
 ---
@@ -130,86 +130,131 @@ trajetória, não há cobertura, não há documento final.
 - [ ] **F4.17** Entrar como **outro mentor** e tentar editar feedback alheio →
       não consegue, e a tela não oferece.
 
-## F5 — Ensaio geral · uma semana inteira
+## F5 — A trajetória do participante
+
+**Por que importa:** é o outro lado do produto, e o único que a turma inteira vê.
+O ritmo é o oposto do da tela do mentor — aqui é para ser lido devagar, e é o que
+a pessoa leva para a semana seguinte.
+
+- [ ] **F5.1 — A primeira impressão.** Entrar com uma conta que ainda não recebeu
+      nada → a trajetória **explica o que vai aparecer ali e quando**, e não
+      mostra um espaço em branco (`RF-E3`). Acontece uma vez só, na primeira
+      semana, para a turma inteira.
+- [ ] **F5.2** Encontro **aberto** aparece como *"os feedbacks deste encontro
+      ainda não foram liberados"*, nunca como vazio.
+- [ ] **F5.3** Encontro **sem avaliação** aparece como cumprido, e o texto não
+      sugere que faltou alguma coisa (`RN-14`).
+- [ ] **F5.4** Encontro **liberado** mostra a contagem e leva ao detalhe.
+- [ ] **F5.5** Um encontro liberado em que **ninguém escreveu para aquela
+      pessoa** → a tela diz isso com naturalidade e lembra que guarda o que foi
+      dito presencialmente. Não pede desculpa, não promete que vem depois.
+      A plataforma registra, não produz (`specs/01`): sem conversa no encontro,
+      não há o que registrar, e isso é normal.
+- [ ] **F5.6** No detalhe, os feedbacks vêm **agrupados por eixo**, com a
+      pergunta-âncora no cabeçalho de cada grupo.
+- [ ] **F5.7 — O teste do modelo.** Mostrar o detalhe a alguém de fora e
+      perguntar: *"por que tem três textos aqui?"* Se a pessoa responder algo
+      como "cada um olhou uma coisa", o agrupamento por eixo está fazendo o
+      trabalho dele. Se responder "são três opiniões", falhou.
+- [ ] **F5.8** Situação, ponto e sugestão são visualmente distintos, e a
+      **sugestão tem o maior peso** — é a única parte acionável.
+- [ ] **F5.9** Todo feedback está **assinado com o nome do mentor** (`RN-04`).
+- [ ] **F5.10** A ordem é do **mais recente para trás**.
+- [ ] **F5.11** A presença aparece em cada encontro.
+- [ ] **F5.12** O participante **não tem sidebar** — só header com logo, nome e
+      sair.
+- [ ] **F5.13** Abrir o código-fonte da página (Ctrl+U) e procurar por `nota`,
+      `observacao_interna` e por um trecho da observação interna escrita por um
+      mentor. **Nada pode aparecer** (`RN-03`).
+- [ ] **F5.14** Digitar o endereço de `/encontros`, `/membros` e de um formulário
+      de feedback logado como participante → cai na trajetória, sem vazar nome de
+      outro participante (`RN-12`).
+
+## F6 — Ensaio geral · uma semana inteira
 
 Este é o fluxo que só faz sentido **depois de tudo pronto**. Ele simula um ciclo
 real, do jeito que vai acontecer em setembro.
 
-- [ ] **F5.1** Mentor cria o encontro 1 (Perfil Empreendedor, sem avaliação),
+Repete de propósito coisas já conferidas nos fluxos acima. Não é desperdício: lá
+cada tela foi testada isolada, com o banco arrumado à mão; aqui elas são testadas
+**na sequência real, com o estado que a anterior deixou** — que é onde a
+regressão entre itens aparece.
+
+- [ ] **F6.1** Mentor cria o encontro 1 (Perfil Empreendedor, sem avaliação),
       abre, marca presença.
-- [ ] **F5.2** Participante entra e vê o encontro 1 na trajetória **como
+- [ ] **F6.2** Participante entra e vê o encontro 1 na trajetória **como
       cumprido**, sem sugerir que faltou feedback (`RN-14`).
-- [ ] **F5.3** Mentor cria o encontro 2 (Oratória), atribui os três eixos a três
+- [ ] **F6.3** Mentor cria o encontro 2 (Oratória), atribui os três eixos a três
       mentores diferentes, abre.
-- [ ] **F5.4** Três mentores registram feedback para as mesmas 10 pessoas, cada
+- [ ] **F6.4** Três mentores registram feedback para as mesmas 10 pessoas, cada
       um no eixo dele.
-- [ ] **F5.5** Participante entra **antes da liberação** → vê o encontro, **não
+- [ ] **F6.5** Participante entra **antes da liberação** → vê o encontro, **não
       vê feedback nenhum** (`RN-05`).
-- [ ] **F5.6** Participante escreve na caixa anônima.
-- [ ] **F5.7** Participante tenta escrever uma segunda mensagem → recusado
+- [ ] **F6.6** Participante escreve na caixa anônima.
+- [ ] **F6.7** Participante tenta escrever uma segunda mensagem → recusado
       (`RN-09`).
-- [ ] **F5.8** Mentor abre a tela de liberação → ela mostra quantos vão receber
+- [ ] **F6.8** Mentor abre a tela de liberação → ela mostra quantos vão receber
       feedback e **quantos não vão receber nenhum**. Conferir que o número está
       certo contando à mão.
-- [ ] **F5.9** Liberar. No mesmo instante: feedback aparece para os
+- [ ] **F6.9** Liberar. No mesmo instante: feedback aparece para os
       participantes, caixa anônima fecha, mensagens aparecem para os mentores.
-- [ ] **F5.10** Participante lê o feedback dele → vê situação, ponto, sugestão e
+- [ ] **F6.10** Participante lê o feedback dele → vê situação, ponto, sugestão e
       **o nome do mentor** (`RN-04`). **Não vê nota nem observação interna**
       (`RN-03`). Conferir também no código-fonte da página (Ctrl+U), não só na
       tela.
-- [ ] **F5.11** Participante tenta ver a trajetória de outro pelo endereço
+- [ ] **F6.11** Participante tenta ver a trajetória de outro pelo endereço
       direto → recusado (`RN-12`).
-- [ ] **F5.12** Mentor lê as mensagens anônimas → sem autor, sem horário, e a
+- [ ] **F6.12** Mentor lê as mensagens anônimas → sem autor, sem horário, e a
       ordem **não** é a de envio (`RN-08`, `RN-10`).
-- [ ] **F5.13** Mentor tenta editar o texto visível de um feedback já liberado →
+- [ ] **F6.13** Mentor tenta editar o texto visível de um feedback já liberado →
       travado, com a razão escrita. A nota continua editável (`RN-06`).
-- [ ] **F5.14** Encerrar a edição → participantes perdem o acesso, e o login
+- [ ] **F6.14** Encerrar a edição → participantes perdem o acesso, e o login
       deles passa a explicar isso e a dizer como receber o documento (`RN-13`).
-- [ ] **F5.15** Mentor continua acessando tudo em modo arquivo.
-- [ ] **F5.16** Gerar o documento final de uma pessoa → a nota aparece **aqui,
+- [ ] **F6.15** Mentor continua acessando tudo em modo arquivo.
+- [ ] **F6.16** Gerar o documento final de uma pessoa → a nota aparece **aqui,
       pela primeira vez**, junto de toda a trajetória dela.
-- [ ] **F5.17** Imprimir o documento final em PDF → cabe, não corta texto, não
+- [ ] **F6.17** Imprimir o documento final em PDF → cabe, não corta texto, não
       fica com fundo escuro desperdiçando tinta.
 
-## F6 — Mobile, em todas as telas
+## F7 — Mobile, em todas as telas
 
 Passar por **todas** as telas construídas, no celular físico:
 
-- [ ] **F6.1** Nenhuma rola na horizontal.
-- [ ] **F6.2** Nenhum botão ou link abaixo de 44px de altura.
-- [ ] **F6.3** Itens de lista percorridos em sequência têm 56px.
-- [ ] **F6.4** Nenhum campo com fonte abaixo de 16px (abaixo disso o iOS dá zoom
+- [ ] **F7.1** Nenhuma rola na horizontal.
+- [ ] **F7.2** Nenhum botão ou link abaixo de 44px de altura.
+- [ ] **F7.3** Itens de lista percorridos em sequência têm 56px.
+- [ ] **F7.4** Nenhum campo com fonte abaixo de 16px (abaixo disso o iOS dá zoom
       sozinho e o mentor perde o contexto no meio do preenchimento).
-- [ ] **F6.5** A barra inferior não cobre conteúdo nem o botão principal.
-- [ ] **F6.6** Com o teclado aberto, o campo em foco continua visível.
-- [ ] **F6.7** Testar em **iPhone e Android**, não só num.
+- [ ] **F7.5** A barra inferior não cobre conteúdo nem o botão principal.
+- [ ] **F7.6** Com o teclado aberto, o campo em foco continua visível.
+- [ ] **F7.7** Testar em **iPhone e Android**, não só num.
 
-## F7 — Acessibilidade e leitura
+## F8 — Acessibilidade e leitura
 
-- [ ] **F7.1** Nenhum estado é comunicado só por cor — todo chip tem a palavra
+- [ ] **F8.1** Nenhum estado é comunicado só por cor — todo chip tem a palavra
       escrita.
-- [ ] **F7.2** Navegar uma tela inteira só pelo teclado, com foco visível.
-- [ ] **F7.3** Passar o leitor de tela pelo formulário de feedback: os rótulos
+- [ ] **F8.2** Navegar uma tela inteira só pelo teclado, com foco visível.
+- [ ] **F8.3** Passar o leitor de tela pelo formulário de feedback: os rótulos
       são anunciados, e o erro da sugestão é lido junto do campo.
-- [ ] **F7.4** Aumentar a fonte do sistema para 200% → nada some nem se
+- [ ] **F8.4** Aumentar a fonte do sistema para 200% → nada some nem se
       sobrepõe.
 
-## F8 — Só dá para testar em produção
+## F9 — Só dá para testar em produção
 
 Não têm como ser validados localmente. Entram no dia em que as contas existirem.
 
-- [ ] **F8.1** `supabase/bootstrap.sql` rodado **uma vez** no banco de produção,
+- [ ] **F9.1** `supabase/bootstrap.sql` rodado **uma vez** no banco de produção,
       com o e-mail certo — o da conta Google com que você realmente clica em
       "entrar".
-- [ ] **F8.2** Depois do bootstrap, o primeiro mentor entra e consegue cadastrar
+- [ ] **F9.2** Depois do bootstrap, o primeiro mentor entra e consegue cadastrar
       os outros por `/membros`.
-- [ ] **F8.3** A tela de consentimento do Google mostra **a DEX** como autora do
+- [ ] **F9.3** A tela de consentimento do Google mostra **a DEX** como autora do
       aplicativo, não uma pessoa física.
-- [ ] **F8.4** `NEXT_PUBLIC_LOGIN_LOCAL` **não existe** no ambiente de produção.
+- [ ] **F9.4** `NEXT_PUBLIC_LOGIN_LOCAL` **não existe** no ambiente de produção.
       Conferir que a tela de login **não** mostra o formulário de senha.
-- [ ] **F8.5** A `service_role` não aparece em nenhuma variável exposta ao
+- [ ] **F9.5** A `service_role` não aparece em nenhuma variável exposta ao
       navegador (`D-07`).
-- [ ] **F8.6** Carregar a tela de registrar feedback no 4G de verdade, no
+- [ ] **F9.6** Carregar a tela de registrar feedback no 4G de verdade, no
       corredor do INF, e medir. É o cenário real.
 
 ---

@@ -4,7 +4,7 @@ Plataforma interna do Hub de Empreendedorismo e Inovação do Instituto de Infor
 
 Os mentores registram feedback estruturado sobre cada participante ao longo dos encontros semanais da formação; cada participante acompanha a própria trajetória. No encerramento, todos recebem um documento individual com o que viveram no processo.
 
-**Estado:** 8 dos 15 work items concluídos · 239 testes passando.
+**Estado:** 9 dos 15 work items concluídos · 266 testes passando.
 **Primeiro uso real:** primeira semana de setembro de 2026.
 
 ## Como rodar
@@ -33,7 +33,7 @@ Ligado por `NEXT_PUBLIC_LOGIN_LOCAL=1`, que **não existe em produção** —
 `testes/guardas-auth.test.ts` falha se vazar.
 
 ```bash
-npm test                    # 239 testes; precisa do Supabase local de pé
+npm test                    # 266 testes; precisa do Supabase local de pé
 npm run lint
 npm run build
 
@@ -44,12 +44,15 @@ npx supabase stop           # libera os contêineres
 **Telas de pé:** `/` · `/entrar` · `/entrar?recusa=nao-autorizado` ·
 `/entrar?recusa=edicao-encerrada` · `/membros` · `/encontros` ·
 `/encontros/[id]` · `/encontros/[id]/eixos` ·
-`/encontros/[id]/feedback/[participacao]`.
+`/encontros/[id]/feedback/[participacao]` ·
+`/trajetoria` · `/trajetoria/encontro/[id]`.
 
-O mentor entra e cai em `/encontros`. Dá para criar encontro, atribuir eixos e abrir.
-O painel lista a turma com busca, e dá para registrar feedback. Falta a marcação de
-presença, que chega com `presenca`. A área do participante não existe ainda: entrar como
-participante cai num 404 em `/trajetoria`.
+**Mentor** — entra e cai em `/encontros`. Cria encontro, atribui eixos, abre e
+registra feedback pelo painel da turma. Falta a marcação de presença (`presenca`)
+e a liberação semanal (`liberacao-do-encontro`).
+
+**Participante** — entra e vê a própria trajetória, com os feedbacks dos encontros
+já liberados, agrupados por eixo. Falta a caixa anônima (`caixa-anonima`).
 
 **Nota ao rodar os testes:** `npm test` limpa o banco e reaplica o seed no fim. Encontros
 criados à mão pela interface somem junto.

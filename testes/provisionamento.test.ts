@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
 import { Client } from "pg";
+import { limparTabelas } from "./bancada";
 
 /**
  * `provisionar_acesso` — a função que decide quem entra, testada contra o
@@ -62,20 +63,7 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  for (const t of [
-    "mensagem_enviada",
-    "mensagem_anonima",
-    "feedback",
-    "presenca",
-    "atribuicao_eixo",
-    "encontro",
-    "participacao",
-    "email_autorizado",
-    "usuario",
-    "edicao",
-  ]) {
-    await db.query(`delete from ${t}`);
-  }
+  await limparTabelas(db);
   await db.query("delete from auth.users");
 
   for (const [id, email] of [

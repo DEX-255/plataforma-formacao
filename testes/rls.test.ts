@@ -244,6 +244,116 @@ describe("RN-12 — participante só enxerga a si mesmo", () => {
   });
 });
 
+/**
+ * A trajetória é a primeira tela que faz o participante ler `usuario`: `RN-04`
+ * exige o nome do mentor, porque assinatura sem nome não é assinatura.
+ *
+ * Essa permissão é estreita de propósito, e é fácil de escrever errado —
+ * `usando (true)` funcionaria igual na tela e entregaria a lista da turma
+ * inteira a qualquer participante com o console aberto.
+ */
+describe("RN-04 com RN-12 — o nome do mentor sim, a turma não", () => {
+  it("Ana lê o nome dos mentores", async () => {
+    const linhas = await comoUsuario<{ nome: string }>(
+      ANA,
+      "select nome from usuario where papel = 'mentor'",
+    );
+    expect(linhas.map((l) => l.nome)).toContain("Mentora");
+  });
+
+  it("Ana lê a si mesma", async () => {
+    const linhas = await comoUsuario(
+      ANA,
+      `select * from usuario where id = '${ANA}'`,
+    );
+    expect(linhas).toHaveLength(1);
+  });
+
+  it("Ana NÃO lê Bruno, nem pedindo pelo id", async () => {
+    const linhas = await comoUsuario(
+      ANA,
+      `select * from usuario where id = '${BRUNO}'`,
+    );
+    expect(
+      linhas,
+      "Ana leu o cadastro de outro participante. É a lista da turma vazando pelo nome do mentor.",
+    ).toHaveLength(0);
+  });
+
+  it("varrer a tabela devolve só Ana e os mentores", async () => {
+    const linhas = await comoUsuario<{ papel: string; nome: string }>(
+      ANA,
+      "select papel, nome from usuario",
+    );
+
+    const participantes = linhas.filter((l) => l.papel === "participante");
+    expect(participantes.map((p) => p.nome)).toEqual(["Ana"]);
+  });
+
+  it("Ana não escreve em usuario — nem no próprio nome", async () => {
+    // Trocar o próprio nome parece inofensivo, mas o nome é o que aparece
+    // assinando presença e no documento final: é registro, não perfil.
+    await comoUsuario(
+      ANA,
+      `update usuario set nome = 'Outro Nome' where id = '${ANA}'`,
+    );
+
+    const { rows } = await db.query(`select nome from usuario where id = $1`, [
+      ANA,
+    ]);
+    expect(rows[0].nome).toBe("Ana");
+  });
+});
+
+describe("o que a trajetória enxerga de encontro", () => {
+  it("rascunho é invisível para o participante", async () => {
+    const { rows } = await db.query(
+      `insert into encontro (edicao_id, numero, tema, data, framework, status)
+       values ($1, 90, 'Ainda em rascunho', current_date, 'oratoria', 'rascunho')
+       returning id`,
+      [edicao],
+    );
+
+    const linhas = await comoUsuario<{ id: string }>(
+      ANA,
+      "select id from encontro",
+    );
+
+    expect(linhas.map((l) => l.id)).not.toContain(rows[0].id);
+  });
+
+  it("encontro de outra edição é invisível", async () => {
+    const outra = (
+      await db.query(`insert into edicao (nome) values ('outra') returning id`)
+    ).rows[0].id;
+
+    const alheio = (
+      await db.query(
+        `insert into encontro (edicao_id, numero, tema, data, framework, status)
+         values ($1, 1, 'De outra turma', current_date, 'oratoria', 'aberto')
+         returning id`,
+        [outra],
+      )
+    ).rows[0].id;
+
+    const linhas = await comoUsuario<{ id: string }>(
+      ANA,
+      "select id from encontro",
+    );
+
+    expect(linhas.map((l) => l.id)).not.toContain(alheio);
+  });
+
+  it("participante não cria nem altera encontro", async () => {
+    const erro = await esperaErro(
+      ANA,
+      `insert into encontro (edicao_id, numero, tema, data, framework)
+       values ('${edicao}', 91, 'Inventado', current_date, 'oratoria')`,
+    );
+    expect(erro).toMatch(/row-level security|policy|permission/i);
+  });
+});
+
 describe("RN-13 — encerrar a edição derruba o acesso", () => {
   it("edição encerrada zera a leitura do participante", async () => {
     await db.query("update edicao set status='encerrada' where id=$1", [edicao]);

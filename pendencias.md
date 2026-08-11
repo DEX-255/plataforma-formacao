@@ -94,7 +94,7 @@ Nada aqui bloqueia o desenho continuar; cada item bloqueia uma parte específica
 A spec foi decomposta em **quinze work items** em `.specs-fire/`. O estado de cada um
 vive no arquivo dele em `.specs-fire/intents/*/work-items/` — é lá que se olha, não aqui.
 
-**Oito concluídos**, com **239 testes** passando, lint limpo e build de produção OK:
+**Nove concluídos**, com **266 testes** passando, lint limpo e build de produção OK:
 
 | # | Item | O que entrou |
 |---|---|---|
@@ -106,11 +106,12 @@ vive no arquivo dele em `.specs-fire/intents/*/work-items/` — é lá que se ol
 | 6 | `membros-e-acesso` | `/membros` — colar lista, papel, quem ainda não entrou |
 | 7 | `edicao-e-encontros` | `/encontros`, painel, atribuição de eixos, navegação do mentor |
 | 8 | `registrar-feedback` | Painel da turma com busca, formulário, nota com descritor |
+| 9 | `trajetoria-do-participante` | Linha do tempo e encontro em detalhe, agrupado por eixo |
 
-**Os sete restantes, em ordem de dependência:**
+**Os seis restantes, em ordem de dependência:**
 
-**`trajetoria-do-participante`** → `liberacao-do-encontro` → `caixa-anonima` ·
-`presenca` → `turma-e-cobertura` → `encerramento-da-edicao` → `documento-final`
+**`liberacao-do-encontro`** → `caixa-anonima` · `presenca` → `turma-e-cobertura` →
+`encerramento-da-edicao` → `documento-final`
 
 `caixa-anonima` e `documento-final` ainda passam por design doc antes do código.
 
@@ -123,6 +124,18 @@ guarda vale é que a limpeza entre testes precisou desligar gatilho para funcion
 A separação dos dois blocos é feita **pelo nome de quem lê**: o cabeçalho diz "O que
 a Ana vai ler". Um teste de guarda novo varre os componentes de cliente e falha se
 `nota` ou `observacao_interna` aparecer em algum que não seja o formulário do mentor.
+
+**O que o item 9 deixou de pé.** A trajetória é a primeira tela que faz o
+participante ler a tabela `usuario` — `RN-04` exige o nome do mentor, porque
+assinatura sem nome não é assinatura. Essa permissão é estreita de propósito e
+ganhou teste: Ana lê os mentores e a si mesma, e **não** lê Bruno nem pedindo pelo
+id. Escrita `using (true)` funcionaria igual na tela e entregaria a lista da turma
+a qualquer participante com o console aberto.
+
+Nenhum estado da trajetória é um vazio ambíguo — há teste que percorre as cinco
+combinações de estado e framework e exige explicação escrita em toda uma que não
+tenha conteúdo. O caso mais delicado é o encontro liberado em que ninguém escreveu
+para aquela pessoa; **vale reler essa frase em voz alta na validação** (F5.5).
 
 **O que o item 7 deixou de pé.** O ciclo `rascunho → aberto → liberado` agora é
 garantido por gatilho no banco, não por checagem na tela: voltar de `liberado` é
