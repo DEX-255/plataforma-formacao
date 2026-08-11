@@ -1,7 +1,7 @@
 import { Client } from "pg";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { limparTabelas } from "./bancada";
+import { limparTabelas, exigirBancoLocal } from "./bancada";
 
 /**
  * Restaura o seed de desenvolvimento depois da suíte.
@@ -20,6 +20,9 @@ import { limparTabelas } from "./bancada";
  */
 const restaurarSeed = () => {
   return async () => {
+    // A mesma trava do `setup.ts`: este arquivo também apaga tudo.
+    exigirBancoLocal();
+
     const url =
       process.env.DATABASE_URL ??
       "postgresql://postgres:postgres@127.0.0.1:54322/postgres";

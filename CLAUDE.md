@@ -14,7 +14,8 @@ decisão que afeta a vida deles.** Isso dita o cuidado de tudo abaixo.
 3. `.specs-fire/intents/*/work-items/` — o estado de cada item (o `status:` no frontmatter)
 4. `specs/` — a especificação, começando por `specs/README.md`
 5. `dominio/` — documentos institucionais da DEX
-6. `roteiro-de-validacao.md` — o que uma pessoa precisa conferir antes de setembro
+6. `revisao-geral.md` — o que falta até setembro, em três partes
+7. `roteiro-de-validacao.md` — os fluxos a conferir com o sistema rodando
 
 **Precedência:** `dominio/` > `specs/` > código. Divergência é defeito, não ambiguidade.
 

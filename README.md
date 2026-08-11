@@ -75,8 +75,9 @@ marca/       Identidade visual: logo e as explorações de design aprovadas.
              decomposta, com dependências e ordem. Ver abaixo.
 pendencias.md   O que ainda depende de decisão ou material.
 roteiro-de-validacao.md   Os fluxos que uma pessoa precisa conferir com o
-             sistema rodando. Cresce a cada item e é executado de uma vez
-             só, no fim — não etapa a etapa.
+             sistema rodando. Executado de uma vez, no fim.
+revisao-geral.md   O que falta até setembro: contas, validação e as
+             decisões de produto em aberto. Comece por aqui.
 ```
 
 ### `specs/` e `.specs-fire/` não competem

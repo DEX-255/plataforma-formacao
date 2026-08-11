@@ -16,6 +16,46 @@ import type { Client } from "pg";
  * `session_replication_role = replica` é o interruptor do Postgres para
  * réplicas e carga em massa: suspende gatilhos de usuário só nesta conexão.
  */
+/**
+ * A trava que impede a suíte de rodar contra um banco que não seja o local.
+ *
+ * **Esta suíte apaga todas as tabelas, com os gatilhos desligados.** É o que ela
+ * precisa fazer para testar as regras contra o banco de verdade — e é também a
+ * coisa mais destrutiva do repositório. Sete arquivos leem `DATABASE_URL` com
+ * `?? localhost`, então basta essa variável estar exportada na sessão por outro
+ * motivo para um `npm test` distraído levar a formação inteira junto.
+ *
+ * Não é hipótese remota: durante o desenvolvimento a variável foi exportada
+ * várias vezes para gerar documento e conferir dado.
+ *
+ * A trava é boba de propósito. Se um dia for preciso rodar contra outro banco,
+ * que seja uma decisão explícita de quem edita esta função — não um efeito
+ * colateral de um `export` esquecido no terminal.
+ */
+const HOSTS_LOCAIS = ["localhost", "127.0.0.1", "::1", "db", "supabase_db_dex"];
+
+export function exigirBancoLocal(url = process.env.DATABASE_URL): void {
+  if (!url) return; // sem variável, os testes usam o localhost embutido
+
+  let host: string;
+  try {
+    host = new URL(url).hostname;
+  } catch {
+    throw new Error(`DATABASE_URL não é uma URL válida: ${url}`);
+  }
+
+  if (!HOSTS_LOCAIS.includes(host)) {
+    throw new Error(
+      `Recusando rodar os testes contra "${host}".\n\n` +
+        "A suíte APAGA todas as tabelas, com os gatilhos desligados. Contra um " +
+        "banco de produção isso levaria os feedbacks, as notas e as presenças " +
+        "da formação — e nada disso é reproduzível a partir de outro lugar.\n\n" +
+        "Se a intenção era mesmo essa, edite `exigirBancoLocal` em " +
+        "testes/bancada.ts e assuma a decisão por escrito.",
+    );
+  }
+}
+
 export const TABELAS_DO_DOMINIO = [
   "mensagem_enviada",
   "mensagem_anonima",
