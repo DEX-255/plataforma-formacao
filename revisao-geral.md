@@ -168,7 +168,40 @@ que observar", e o documento final mostra o texto explicando por que não há no
 **Acrescentar os níveis depois é acrescentar dados em `frameworks.ts` — nenhuma
 tela muda, nenhuma migração.**
 
-## 3.3 — As fontes do documento final
+## 3.3 — O peso da nota no documento final · **decisão de produto, não de código**
+
+Você levantou duas mudanças possíveis: **tirar os gráficos** e **mexer no texto**,
+porque *"uma pessoa reprovar por notas não achamos que faça tanto sentido"*.
+
+A segunda é a que importa, e ela expõe uma tensão que vale nomear:
+
+**Se a nota não é o que decide o corte, o documento hoje dá a ela mais peso
+visual do que ela tem de papel real.** Ele já não diz se a pessoa passou, já
+explica a escala antes de mostrar número, e já põe as palavras antes de tudo.
+Mas gráfico, tabela e média somam três representações do mesmo número — e três
+representações dizem "isto aqui é o que interessa", independente do que o texto
+afirme.
+
+Três saídas, da mais leve para a mais pesada:
+
+1. **Só texto.** Trocar "as notas ficaram escondidas para o feedback ser lido
+   como orientação" por algo que diga o que a nota é de fato: um registro de
+   calibragem entre mentores, não o critério do processo. Uma constante em
+   `src/dominio/documento.ts`.
+2. **Tirar a tabela, manter o gráfico.** O gráfico mostra movimento, que é a
+   coisa útil; a tabela dá o número exato, que é a que vira placar. Remover uma
+   chamada de função em `documento/gerar.ts`.
+3. **Tirar os números por completo.** O documento vira só as palavras dos
+   mentores, a presença e os retratos. Uma linha em `SECOES` — e o teste de
+   `RF-H2` deixa de se aplicar, porque não há número a legendar.
+
+**Não decida isso agora.** Decida depois do **F11.2** — imprimir um documento em
+papel e ler imaginando quem não passou. É provável que o papel diga o que a tela
+não disse.
+
+- [ ] Decisão tomada, depois da leitura impressa
+
+## 3.4 — As fontes do documento final
 
 O gerador roda fora do Next e a pilha de fontes cai para as do sistema. O
 documento sai tipograficamente pior do que foi desenhado.
@@ -194,6 +227,8 @@ de rede.
 | Aparência (tipografia, cores, espaço) | o bloco `<style>` em `documento/gerar.ts` | Fácil — é CSS comum |
 | Acrescentar uma seção | `SECOES` + uma entrada no objeto `conteudo` | Fácil |
 | Como o gráfico desenha | `svgDaEvolucao` em `gerar.ts` | Média — é SVG à mão |
+| **Tirar a tabela de notas** | remover a chamada `tabelaDaEvolucao` | Uma linha |
+| **Tirar os números por completo** | remover `como-ler-a-escala` e `evolucao` de `SECOES` | Duas linhas, mais ajustar o teste de `RF-H2` |
 
 Três coisas que tornam isso seguro:
 
@@ -277,11 +312,19 @@ Um cuidado: o repositório é **local, sem remote**. O primeiro passo é criar o
 repositório no GitHub — de preferência na organização da DEX, não na sua conta
 pessoal, pelo mesmo motivo das outras contas.
 
-- [ ] Repositório no GitHub, na organização da DEX
-- [ ] GitHub Actions com testes, lint e build
+- [x] ~~GitHub Actions com testes, lint e build~~ — `.github/workflows/ci.yml`
+- [x] ~~`CONTRIBUINDO.md`~~ — as quatro regras, a armadilha do `security definer`,
+      a regra da migração destrutiva
+- [ ] **Repositório no GitHub, na organização da DEX** — é o passo que falta, e é
+      seu: o repo é local, sem remote
 - [ ] Vercel conectada, com prévia por PR
-- [ ] `main` protegido
-- [ ] `CONTRIBUINDO.md`
+- [ ] `main` protegido: só entra por PR com o CI verde
+
+**O workflow foi escrito mas nunca rodou no GitHub** — não existe repositório
+remoto ainda. A sequência que ele executa (`supabase start` → lint → tipos →
+testes → build com as variáveis do CI) foi verificada localmente, comando a
+comando. O que só o primeiro push vai dizer é se o runner sobe o Supabase sem
+tropeço; se der problema, é ali.
 
 **Recomendo fazer isso antes de setembro**, não depois: durante a formação
 qualquer conserto é feito com pressa, e é exatamente aí que a rede de proteção

@@ -1,0 +1,81 @@
+name: CI
+
+# Por que este arquivo existe
+#
+# Os testes deste repositório não são burocracia: é neles que as regras moram.
+# RN-03 (o participante nunca vê a nota), RN-08 (ninguém descobre quem escreveu
+# na caixa anônima), RN-12 (participante só enxerga a si mesmo) — cada uma tem
+# teste contra o banco de verdade, porque testar pela interface provaria apenas
+# que o botão não aparece.
+#
+# Enquanto quem escreveu o projeto estiver por perto, ele lembra de rodar
+# `npm test`. **Quem entrar na DEX em 2027 não vai saber que essas regras
+# existem.** Vai mexer numa policy, achar que melhorou, e RN-03 quebra em
+# silêncio — o tipo de falha que só aparece quando alguém vê a nota de outra
+# pessoa.
+#
+# É para essa pessoa que este arquivo existe.
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+# Um push novo cancela a execução anterior do mesmo ramo: o que importa é o
+# estado atual, não a fila.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    name: Testes, lint e build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      # O Supabase local sobe de verdade, com as migrações aplicadas. Sem ele,
+      # metade da suíte não roda — e é justamente a metade que protege as quatro
+      # regras cuja violação é irreversível.
+      - name: Subir o Supabase local
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - run: supabase start
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Tipos
+        run: npx tsc --noEmit
+
+      # A suíte recusa rodar contra banco que não seja local (`exigirBancoLocal`
+      # em testes/bancada.ts). Aqui o banco é o contêiner efêmero do runner, e a
+      # trava deixa passar.
+      - name: Testes
+        run: npm test
+
+      - name: Build de produção
+        run: npm run build
+        env:
+          # Valores do Supabase local — o build só precisa que as variáveis
+          # existam. NEXT_PUBLIC_LOGIN_LOCAL fica de fora de propósito:
+          # `testes/guardas-auth.test.ts` falha se ela vazar para produção, e o
+          # CI não é lugar de ensaiar essa porta aberta.
+          NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY_LOCAL || 'chave-local-do-ci' }}
+
+      - name: Encerrar o Supabase
+        if: always()
+        run: supabase stop
