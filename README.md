@@ -4,7 +4,7 @@ Plataforma interna do Hub de Empreendedorismo e Inovação do Instituto de Infor
 
 Os mentores registram feedback estruturado sobre cada participante ao longo dos encontros semanais da formação; cada participante acompanha a própria trajetória. No encerramento, todos recebem um documento individual com o que viveram no processo.
 
-**Estado:** 6 dos 15 work items concluídos · 173 testes passando.
+**Estado:** 7 dos 15 work items concluídos · 206 testes passando.
 **Primeiro uso real:** primeira semana de setembro de 2026.
 
 ## Como rodar
@@ -33,7 +33,7 @@ Ligado por `NEXT_PUBLIC_LOGIN_LOCAL=1`, que **não existe em produção** —
 `testes/guardas-auth.test.ts` falha se vazar.
 
 ```bash
-npm test                    # 173 testes; precisa do Supabase local de pé
+npm test                    # 206 testes; precisa do Supabase local de pé
 npm run lint
 npm run build
 
@@ -42,9 +42,16 @@ npx supabase stop           # libera os contêineres
 ```
 
 **Telas de pé:** `/` · `/entrar` · `/entrar?recusa=nao-autorizado` ·
-`/entrar?recusa=edicao-encerrada` · `/membros`.
-As outras ainda não existem — entrar como mentor cai num 404 em `/encontros`,
-que é o próximo item.
+`/entrar?recusa=edicao-encerrada` · `/membros` · `/encontros` ·
+`/encontros/[id]` · `/encontros/[id]/eixos`.
+
+O mentor entra e cai em `/encontros`. Dá para criar encontro, atribuir eixos e abrir.
+O painel do encontro ainda não lista a turma nem aceita presença — isso chega com
+`registrar-feedback` e `presenca`. A área do participante não existe ainda: entrar como
+participante cai num 404 em `/trajetoria`.
+
+**Nota ao rodar os testes:** `npm test` limpa o banco e reaplica o seed no fim. Encontros
+criados à mão pela interface somem junto.
 
 ## Onde está cada coisa
 

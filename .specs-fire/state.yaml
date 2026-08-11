@@ -21,24 +21,30 @@ intents:
     work_items:
       - id: fundacao-projeto
         title: Fundação do projeto e design system em código
-        status: pending
+        status: completed
         complexity: medium
         mode: confirm
         depends_on: []
+        run_id: run-dex-001
+        completed_at: 2026-08-11T11:40:00.240Z
       - id: esquema-e-rls
         title: Esquema do banco e políticas de RLS
-        status: pending
+        status: completed
         complexity: high
         mode: validate
         depends_on:
           - fundacao-projeto
+        run_id: run-dex-001
+        completed_at: 2026-08-11T11:40:00.240Z
       - id: regras-de-dominio
         title: Regras de domínio e frameworks de avaliação
-        status: pending
+        status: completed
         complexity: medium
         mode: confirm
         depends_on:
           - fundacao-projeto
+        run_id: run-dex-001
+        completed_at: 2026-08-11T11:40:00.240Z
       - id: auth-login-google
         title: Login com Google, sessão e proteção de rota
         status: completed
@@ -60,11 +66,13 @@ intents:
         completed_at: 2026-08-08T21:43:09.669Z
       - id: edicao-e-encontros
         title: Edição, encontros e atribuição de eixos
-        status: pending
+        status: completed
         complexity: medium
         mode: confirm
         depends_on:
           - auth-login-google
+        run_id: run-dex-005
+        completed_at: 2026-08-11T11:40:27.816Z
       - id: registrar-feedback
         title: Registrar feedback — a tela do mentor
         status: pending
@@ -133,36 +141,7 @@ intents:
         depends_on:
           - encerramento-da-edicao
 runs:
-  active:
-    - id: run-dex-001
-      scope: wide
-      work_items:
-        - id: fundacao-projeto
-          intent: plataforma-formacao-dex
-          mode: confirm
-          status: completed
-          current_phase: review
-          checkpoint_state: approved
-          current_checkpoint: plan
-          completed_at: 2026-08-07T21:46:01.047Z
-        - id: esquema-e-rls
-          intent: plataforma-formacao-dex
-          mode: validate
-          status: completed
-          current_phase: review
-          checkpoint_state: approved
-          current_checkpoint: plan
-          completed_at: 2026-08-07T21:56:47.832Z
-        - id: regras-de-dominio
-          intent: plataforma-formacao-dex
-          mode: confirm
-          status: completed
-          current_phase: review
-          checkpoint_state: approved
-          current_checkpoint: plan
-          completed_at: 2026-08-08T17:16:39.964Z
-      current_item: null
-      started: 2026-08-07T21:31:05.307Z
+  active: []
   completed:
     - id: run-dex-002
       scope: single
@@ -188,3 +167,25 @@ runs:
           mode: autopilot
       started: 2026-08-08T21:37:20.807Z
       completed: 2026-08-08T21:43:09.669Z
+    - id: run-dex-001
+      scope: wide
+      work_items:
+        - id: fundacao-projeto
+          intent: plataforma-formacao-dex
+          mode: confirm
+        - id: esquema-e-rls
+          intent: plataforma-formacao-dex
+          mode: validate
+        - id: regras-de-dominio
+          intent: plataforma-formacao-dex
+          mode: confirm
+      started: 2026-08-07T21:31:05.307Z
+      completed: 2026-08-11T11:40:00.240Z
+    - id: run-dex-005
+      scope: single
+      work_items:
+        - id: edicao-e-encontros
+          intent: plataforma-formacao-dex
+          mode: confirm
+      started: 2026-08-11T11:40:06.684Z
+      completed: 2026-08-11T11:40:27.816Z

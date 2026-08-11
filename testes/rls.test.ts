@@ -47,6 +47,28 @@ async function comoUsuario<T>(
   }
 }
 
+/**
+ * Um encontro novo, já aberto, para os testes da caixa anônima.
+ *
+ * Antes isto era `update encontro set status='aberto'` no encontro
+ * compartilhado, que a essa altura já tinha sido liberado. O gatilho
+ * `encontro_transicao` passou a recusar essa volta — e com razão: é justamente
+ * a transição que o produto promete não existir. O teste não pode furar a
+ * regra que ele existe para verificar.
+ */
+let numeroDeApoio = 10;
+
+async function encontroAbertoNovo(): Promise<string> {
+  numeroDeApoio += 1;
+  const { rows } = await db.query(
+    `insert into encontro (edicao_id, numero, tema, data, framework, status)
+     values ($1, $2, 'Encontro de apoio', current_date, 'oratoria', 'aberto')
+     returning id`,
+    [edicao, numeroDeApoio],
+  );
+  return rows[0].id;
+}
+
 async function esperaErro(
   usuario: string,
   consulta: string,
@@ -341,12 +363,12 @@ describe("RN-08 / RN-09 / RN-10 — anonimato", () => {
   });
 
   it("o participante não consegue inserir mensagem direto — só a RPC escreve", async () => {
-    await db.query("update encontro set status='aberto' where id=$1", [encontro]);
+    const aberto = await encontroAbertoNovo();
 
     const erro = await esperaErro(
       ANA,
       `insert into mensagem_anonima (encontro_id, texto)
-       values ('${encontro}', 'burlando a rpc')`,
+       values ('${aberto}', 'burlando a rpc')`,
     );
     expect(erro).toMatch(/row-level security|permission|policy/i);
   });
@@ -361,7 +383,7 @@ describe("RN-08 / RN-09 / RN-10 — anonimato", () => {
   });
 
   it("RN-09 — a segunda mensagem do mesmo participante é recusada", async () => {
-    await db.query("update encontro set status='aberto' where id=$1", [encontro]);
+    const aberto = await encontroAbertoNovo();
 
     await db.query("begin");
     await db.query("select set_config('role','authenticated',true)");
@@ -369,14 +391,14 @@ describe("RN-08 / RN-09 / RN-10 — anonimato", () => {
       JSON.stringify({ sub: ANA, role: "authenticated" }),
     ]);
     await db.query("select public.enviar_mensagem_anonima($1,$2)", [
-      encontro,
+      aberto,
       "primeira",
     ]);
 
     let bloqueou = false;
     try {
       await db.query("select public.enviar_mensagem_anonima($1,$2)", [
-        encontro,
+        aberto,
         "segunda",
       ]);
     } catch {
@@ -397,7 +419,7 @@ describe("RN-08 / RN-09 / RN-10 — anonimato", () => {
 
 describe("reidentificação — o teste que specs/07 chama de severidade máxima", () => {
   it("com acesso total ao banco, não existe junção que ligue autor e mensagem", async () => {
-    await db.query("update encontro set status='aberto' where id=$1", [encontro]);
+    const aberto = await encontroAbertoNovo();
     await db.query("delete from mensagem_anonima");
     await db.query("delete from mensagem_enviada");
 
@@ -411,7 +433,7 @@ describe("reidentificação — o teste que specs/07 chama de severidade máxima
         JSON.stringify({ sub: usuario, role: "authenticated" }),
       ]);
       await db.query("select public.enviar_mensagem_anonima($1,$2)", [
-        encontro,
+        aberto,
         texto,
       ]);
       await db.query("commit");

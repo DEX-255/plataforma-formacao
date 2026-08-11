@@ -146,6 +146,8 @@ Textura é da home, do login e do documento. Nas telas de trabalho ela sai: atra
 
 **Campo** — borda 2px, raio 14px, 16px mínimo. No foco, borda roxa e sombra sólida 3px roxa.
 
+**Seleção** — mesma casca do campo, com a seta desenhada por nós. Usa o `<select>` nativo por dentro: no celular ele abre a roda do sistema, que é maior, mais rápida e acessível de graça — uma lista customizada perderia isso para ganhar só aparência. Aparece na escolha de framework do encontro e do eixo do mentor. **Não serve para a nota**, que tem componente próprio.
+
 **Chip de eixo** — pílula com o nome do eixo. Um par de cores por eixo, sempre com o rótulo escrito junto.
 
 **Item de lista da turma** — nome, avatar, cobertura, presença. Alvo de toque de 56px de altura no celular.

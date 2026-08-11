@@ -4,9 +4,12 @@ title: Edição, encontros e atribuição de eixos
 intent: plataforma-formacao-dex
 complexity: medium
 mode: confirm
-status: pending
-depends_on: [auth-login-google]
+status: completed
+depends_on:
+  - auth-login-google
 created: 2026-08-06T00:26:01Z
+run_id: run-dex-005
+completed_at: 2026-08-11T11:40:27.816Z
 ---
 
 # Work Item: Edição, encontros e atribuição de eixos

@@ -74,12 +74,12 @@ Nada aqui bloqueia o desenho continuar; cada item bloqueia uma parte específica
       instrui a pessoa a procurar alguém.
 - [ ] **Datas dos encontros.** Existem os temas; as datas dependem de um horário que feche com todos. O sistema não depende disso — o encontro é criado quando acontece — mas a linha do tempo fica melhor com elas.
 
-## Plano de execução — checkpoint de 09/08/2026
+## Plano de execução — checkpoint de 11/08/2026
 
 A spec foi decomposta em **quinze work items** em `.specs-fire/`. O estado de cada um
 vive no arquivo dele em `.specs-fire/intents/*/work-items/` — é lá que se olha, não aqui.
 
-**Seis concluídos**, com **173 testes** passando, lint limpo e build de produção OK:
+**Sete concluídos**, com **206 testes** passando, lint limpo e build de produção OK:
 
 | # | Item | O que entrou |
 |---|---|---|
@@ -89,15 +89,26 @@ vive no arquivo dele em `.specs-fire/intents/*/work-items/` — é lá que se ol
 | 4 | `auth-login-google` | Decisão de acesso no banco, tela de login, proteção de rota |
 | 5 | `landing-publica` | Home 4b, com o símbolo redesenhado |
 | 6 | `membros-e-acesso` | `/membros` — colar lista, papel, quem ainda não entrou |
+| 7 | `edicao-e-encontros` | `/encontros`, painel, atribuição de eixos, navegação do mentor |
 
-**Os nove restantes, em ordem de dependência:**
+**Os oito restantes, em ordem de dependência:**
 
-`edicao-e-encontros` → **`registrar-feedback`** → `trajetoria-do-participante` →
-`liberacao-do-encontro` → `caixa-anonima` · `presenca` → `turma-e-cobertura` →
-`encerramento-da-edicao` → `documento-final`
+**`registrar-feedback`** → `trajetoria-do-participante` → `liberacao-do-encontro` →
+`caixa-anonima` · `presenca` → `turma-e-cobertura` → `encerramento-da-edicao` →
+`documento-final`
 
 O `registrar-feedback` é o mais importante do produto e o único que ainda passa por
 design doc antes do código. `caixa-anonima` e `documento-final` também são `validate`.
+
+**O que o item 7 deixou de pé.** O ciclo `rascunho → aberto → liberado` agora é
+garantido por gatilho no banco, não por checagem na tela: voltar de `liberado` é
+irreparável, porque o feedback já foi lido e a caixa anônima já fechou. Três testes
+antigos quebraram nisso — o setup deles reabria um encontro liberado, que é justamente
+a transição que o produto promete não existir.
+
+A navegação do mentor entrou junto: sidebar no computador, barra inferior no celular
+(`specs/04:136`), com ponto no item Encontros quando há encontro acontecendo. Só os
+destinos que existem aparecem; Turma e Encerramento chegam com os itens deles.
 
 **O que trava:** nada de código. Tudo roda local. O que falta é operacional — as contas,
 e o teste do `@discente` assim que o OAuth existir.

@@ -1,4 +1,9 @@
-import type { InputHTMLAttributes, TextareaHTMLAttributes, ReactNode } from "react";
+import type {
+  InputHTMLAttributes,
+  TextareaHTMLAttributes,
+  SelectHTMLAttributes,
+  ReactNode,
+} from "react";
 
 /**
  * Campo — specs/05, seção Componentes.
@@ -90,6 +95,63 @@ export function Campo({
         className={`${campoBase} ${className}`}
         {...resto}
       />
+    </Envolucro>
+  );
+}
+
+type PropsSelecao = Comuns & SelectHTMLAttributes<HTMLSelectElement>;
+
+/**
+ * Seleção — specs/05, seção Componentes.
+ *
+ * `<select>` nativo por dentro, de propósito. No celular ele abre a roda do
+ * sistema: alvo grande, rolagem com inércia, leitor de tela funcionando sem
+ * nada da nossa parte. Uma lista customizada trocaria tudo isso por aparência.
+ *
+ * `appearance-none` some com a seta do sistema, então ela é redesenhada aqui —
+ * sem isso o campo fica sem indicação de que abre.
+ */
+export function Selecao({
+  rotulo,
+  auxilio,
+  erro,
+  id,
+  className = "",
+  children,
+  ...resto
+}: PropsSelecao) {
+  return (
+    <Envolucro rotulo={rotulo} auxilio={auxilio} erro={erro} id={id}>
+      <div className="relative">
+        <select
+          id={id}
+          aria-invalid={erro ? true : undefined}
+          aria-describedby={
+            [auxilio ? `${id}-auxilio` : null, erro ? `${id}-erro` : null]
+              .filter(Boolean)
+              .join(" ") || undefined
+          }
+          className={`${campoBase} min-h-toque appearance-none pr-12 ${className}`}
+          {...resto}
+        >
+          {children}
+        </select>
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden
+          className="pointer-events-none absolute right-4 top-1/2 size-5 -translate-y-1/2 text-neutro"
+        >
+          <path
+            d="m7 10 5 5 5-5"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
     </Envolucro>
   );
 }
