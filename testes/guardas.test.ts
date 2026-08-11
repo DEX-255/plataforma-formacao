@@ -198,6 +198,22 @@ describe("os utilitários nomeados existem de verdade", () => {
    * Este teste existe porque o teste de componente (`toHaveClass`) passava
    * enquanto a garantia não valia. Classe presente não é regra aplicada.
    */
+  /**
+   * As três cores da série do gráfico de evolução.
+   *
+   * Não foram escolhidas a olho: passaram os seis critérios do validador de
+   * paleta contra a superfície do app. Renomear um token sem mexer no
+   * componente deixaria a linha sem cor e o gráfico ilegível — e o gráfico vai
+   * para o documento final da pessoa.
+   */
+  it.each(["--color-serie-1", "--color-serie-2", "--color-serie-3"])(
+    "o token %s existe",
+    (token) => {
+      const css = readFileSync(TOKENS, "utf8");
+      expect(css).toContain(`${token}:`);
+    },
+  );
+
   const UTILITARIOS = [
     "min-h-toque",
     "min-h-toque-lista",

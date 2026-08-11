@@ -54,6 +54,18 @@ const IconeMembros = (
   </svg>
 );
 
+const IconeTurma = (
+  <svg viewBox="0 0 24 24" fill="none" aria-hidden className="size-5">
+    <circle cx="12" cy="8" r="3.5" stroke="currentColor" strokeWidth="2" />
+    <path
+      d="M5 20c0-3.6 3.1-5.5 7-5.5s7 1.9 7 5.5"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
 const DESTINOS: Destino[] = [
   {
     href: "/encontros",
@@ -63,10 +75,17 @@ const DESTINOS: Destino[] = [
     icone: IconeEncontros,
   },
   {
+    href: "/turma",
+    rotulo: "Turma",
+    grupo: "FORMAÇÃO",
+    noCelular: true,
+    icone: IconeTurma,
+  },
+  {
     href: "/membros",
     rotulo: "Membros",
     grupo: "GESTÃO",
-    noCelular: true,
+    noCelular: false,
     icone: IconeMembros,
   },
 ];

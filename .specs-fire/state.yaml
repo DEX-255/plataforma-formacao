@@ -120,12 +120,14 @@ intents:
         completed_at: 2026-08-11T20:49:57.073Z
       - id: turma-e-cobertura
         title: Turma e cobertura de feedback
-        status: pending
+        status: completed
         complexity: medium
         mode: confirm
         depends_on:
           - registrar-feedback
           - presenca
+        run_id: run-dex-011
+        completed_at: 2026-08-11T21:19:27.112Z
       - id: landing-publica
         title: Landing pública
         status: completed
@@ -239,3 +241,11 @@ runs:
           mode: autopilot
       started: 2026-08-11T21:04:28.223Z
       completed: 2026-08-11T21:04:28.324Z
+    - id: run-dex-011
+      scope: single
+      work_items:
+        - id: turma-e-cobertura
+          intent: plataforma-formacao-dex
+          mode: confirm
+      started: 2026-08-11T21:19:27.020Z
+      completed: 2026-08-11T21:19:27.112Z

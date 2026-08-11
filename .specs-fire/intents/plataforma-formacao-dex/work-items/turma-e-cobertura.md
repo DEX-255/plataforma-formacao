@@ -4,9 +4,13 @@ title: Turma e cobertura de feedback
 intent: plataforma-formacao-dex
 complexity: medium
 mode: confirm
-status: pending
-depends_on: [registrar-feedback, presenca]
+status: completed
+depends_on:
+  - registrar-feedback
+  - presenca
 created: 2026-08-06T00:26:01Z
+run_id: run-dex-011
+completed_at: 2026-08-11T21:19:27.112Z
 ---
 
 # Work Item: Turma e cobertura de feedback

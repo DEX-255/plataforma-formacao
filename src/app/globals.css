@@ -29,6 +29,24 @@
   --color-erro: #b3261e;
   --color-erro-claro: #ec5f5f; /* 5,70 sobre --preto · 5,30 sobre --superficie */
 
+  /* ── Série do gráfico de evolução ──────────────────────────────────────── */
+  /* Três canais de identidade para os eixos, na ordem fixa do framework. NÃO é
+     escala de grandeza e NÃO se recicla: um eixo tem sempre a mesma cor, em
+     toda a formação e no documento final.
+
+     Estes três tons não foram escolhidos a olho. Rodados no validador de
+     paleta contra a superfície #1c1917, passam os seis critérios — faixa de
+     luminosidade, piso de croma, separação sob daltonismo (pior par ΔE 9,6 em
+     deuteranopia), piso de visão normal e contraste ≥ 3:1.
+
+     O que reprovou e por quê fica registrado, para ninguém "melhorar" de volta:
+     `--roxo-claro` cai fora da faixa (L 0,72), e o par sucesso↔atenção dá ΔE
+     7,8 em protanopia — legal só com codificação secundária, e aqui existe
+     alternativa que não precisa dela. */
+  --color-serie-1: #8c52ff; /* mesmo roxo da marca — o primeiro eixo */
+  --color-serie-2: #3a86c8;
+  --color-serie-3: #c9821f;
+
   /* ── Superfícies do app ────────────────────────────────────────────────── */
   --color-fundo: #14110f;
   --color-superficie: #1c1917;

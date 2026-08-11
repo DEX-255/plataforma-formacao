@@ -94,7 +94,7 @@ Nada aqui bloqueia o desenho continuar; cada item bloqueia uma parte específica
 A spec foi decomposta em **quinze work items** em `.specs-fire/`. O estado de cada um
 vive no arquivo dele em `.specs-fire/intents/*/work-items/` — é lá que se olha, não aqui.
 
-**Doze concluídos**, com **336 testes** passando, lint limpo e build de produção OK:
+**Treze concluídos**, com **366 testes** passando, lint limpo e build de produção OK:
 
 | # | Item | O que entrou |
 |---|---|---|
@@ -110,10 +110,11 @@ vive no arquivo dele em `.specs-fire/intents/*/work-items/` — é lá que se ol
 | 10 | `liberacao-do-encontro` | Prévia com os números, confirmação digitada, liberação atômica |
 | 11 | `caixa-anonima` | Envio anônimo, leitura embaralhada, e o vazamento fechado |
 | 12 | `presenca` | Marcação em massa, e o alarme falso da cobertura resolvido |
+| 13 | `turma-e-cobertura` | Visão de turma, perfil do corte e o gráfico de evolução |
 
-**Os três restantes, em ordem de dependência:**
+**Os dois restantes, em ordem de dependência:**
 
-**`turma-e-cobertura`** → `encerramento-da-edicao` → `documento-final`
+**`encerramento-da-edicao`** → `documento-final`
 
 `documento-final` ainda passa por design doc antes do código.
 
@@ -200,3 +201,24 @@ O teste de reidentificação existente passava porque atacava pelo lado difícil
 tabela entrega a lista pronta. A política foi removida, a contagem que `RF-B4`
 exige passou a vir de uma função que devolve só o inteiro, e entraram quatro
 testes novos fechando o caminho fácil.
+
+**O que o item 13 deixou de pé.** O gráfico de evolução tem duas coisas que só
+apareceram vendo rodar, e as duas fariam ele **mentir sobre a pessoa**:
+
+1. A cor vinha da ordem de chegada do banco, não da identidade do eixo — a
+   legenda saiu "Presença, Fala, Mensagem". Fala poderia ter cor diferente em
+   dois documentos finais, e documentos com cores trocadas são incomparáveis.
+   Agora a cor é o índice do eixo no framework, e há teste travando isso.
+2. O marcador de "não observado" ficava na altura do 3, no meio da escala. Ele
+   lê como nota 3, que é exatamente o que `RN-07` proíbe. Foi para uma faixa
+   própria **abaixo da escala**, rotulada `n/o`.
+
+As três cores da série não foram escolhidas a olho: passaram os seis critérios
+de um validador de paleta contra a superfície do app — faixa de luminosidade,
+croma, separação sob daltonismo (pior par ΔE 9,6 em deuteranopia), piso de visão
+normal e contraste. O que reprovou está registrado em `globals.css` para ninguém
+"melhorar" de volta.
+
+A tela de turma mostra **"sem nenhum feedback"** além de "abaixo da cobertura".
+O segundo é relativo e cala quando a turma inteira está em zero; o primeiro não
+cala nunca, e ao ver rodando ficou claro que é ele que o mentor precisa enxergar.
