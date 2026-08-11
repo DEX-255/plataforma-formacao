@@ -31,98 +31,37 @@ O CI roda exatamente isso. Se passar aqui, passa lá.
 
 ---
 
-## As quatro regras cuja violação é irreversível
+## As regras do projeto estão no `CLAUDE.md`
 
-Estas não são preferências de estilo. Cada uma tem teste contra o banco de
-verdade, e **quebrar qualquer uma causa dano que não se desfaz**.
+Não duplicadas aqui de propósito: regra escrita em dois lugares diverge, e a que
+diverge silenciosamente é a que causa dano.
 
-| Regra | O que garante | Por que não dá para consertar depois |
-|---|---|---|
-| `RN-03` | O participante nunca vê nota nem observação interna durante a formação | Quem viu, viu |
-| `RN-08` | Não existe vínculo armazenado entre mensagem anônima e autor | Um autor identificado uma vez, e ninguém escreve mais — nem naquela edição nem nas seguintes |
-| `RN-10` | Mensagens anônimas em ordem aleatória, sem horário | Idem |
-| `RN-12` | Participante só enxerga a si mesmo | Ler a avaliação de um colega não se desfaz |
+**Leia `CLAUDE.md` antes de mexer em qualquer coisa** — mesmo que você não use
+Claude Code. Ele é o contexto compartilhado do projeto e carrega:
 
-Elas estão testadas em `testes/rls.test.ts`, `testes/liberacao-db.test.ts` e
-`testes/guardas-bloco-interno.test.ts`. **Se um desses testes falhar, não
-contorne: o teste está certo.** Já aconteceu três vezes neste projeto de um
-teste "quebrar" e a causa ser o código novo furando a regra.
+- **as quatro regras cuja violação é irreversível** (`RN-03`, `RN-08`, `RN-10`,
+  `RN-12`) e por que nenhuma se conserta depois;
+- **a armadilha do `security definer`** — quem pula a RLS herda a obrigação de
+  repetir as regras dela. Mordeu duas vezes neste projeto;
+- **a regra das migrações** — acrescentar é seguro, remover não é, e durante a
+  formação migração destrutiva não entra;
+- **por que os testes apagam o banco** e a trava que impede isso em produção;
+- as armadilhas já pisadas, para não pisarem de novo.
 
-### A armadilha do `security definer`
-
-Funções `security definer` **passam por cima da RLS** — é para isso que existem.
-Quem pula a RLS **herda a obrigação de repetir as regras que ela aplicava**.
-
-Já mordeu duas vezes aqui: `enviar_mensagem_anonima` deixava o participante
-escrever depois da edição encerrada, e a política de `mensagem_enviada` entregava
-a lista de quem tinha escrito na caixa anônima. Nenhuma das duas quebrou teste
-até alguém escrever o teste certo.
-
----
-
-## Migrações
-
-- **Acrescentar é seguro. Remover não é.**
-- **Durante a formação, migração que remove coluna ou tabela não entra.** Se
-  parecer necessária, espere o encerramento. `RN-18` diz que nada é apagado, e o
-  documento final precisa continuar reproduzível anos depois.
-- Migração é arquivo em `supabase/migrations/`, nunca clique no painel do
-  Supabase (`D-06`). O painel não deixa rastro e não roda no CI.
-
-## O que nunca entra no repositório
-
-- `SUPABASE_SERVICE_ROLE_KEY` — ela ignora toda a RLS. Vive só em variável de
-  ambiente, e só o gerador do documento final a usa (`D-07`). Há teste garantindo
-  que ela aparece em um arquivo só.
-- `NEXT_PUBLIC_LOGIN_LOCAL` em produção. `testes/guardas-auth.test.ts` falha se
-  vazar.
-- Documentos finais gerados (`documento/saida/`).
-
-## Os testes apagam o banco
-
-A suíte limpa todas as tabelas, com os gatilhos desligados — é o que ela precisa
-para verificar as regras contra o banco de verdade.
-
-Existe uma trava (`exigirBancoLocal` em `testes/bancada.ts`) que recusa rodar
-contra qualquer host que não seja local. **Não a contorne.** Se você acha que
-precisa rodar contra outro banco, provavelmente não precisa.
-
----
-
-## Como este projeto é construído
-
-**Spec antes de código.** Nenhuma tela, tabela ou regra entra sem estar em
-`specs/`. Decisão nova volta para a spec **antes** de virar arquivo — é o que
-mantém as regras num lugar só em vez de espalhadas por dez componentes.
-
-**Precedência:** `dominio/` > `specs/` > código. Divergência é defeito, não
-ambiguidade.
-
-**`src/dominio/regras.ts` é a única casa das regras de negócio.** Nenhum
-componente decide sozinho se um feedback pode ser editado: a tela pergunta, a
-regra responde.
-
-Commits e testes citam os códigos (`RN-01`…`RN-18`, `RF-A1`…). Isso é o que
-permite achar, dois anos depois, por que uma linha existe.
-
-## Armadilhas já encontradas — não repita
-
-- **Teste que verifica nome de classe não prova que a regra vale.**
-  `min-h-toque` passava no teste e não gerava CSS nenhum; nenhum botão tinha
-  altura mínima.
-- **Decisão de design se valida vendo rodar**, não no papel. Abra a tela e meça
-  em 390px: alvos ≥44px, nada rolando na horizontal.
-- **Regra decidida na tela é regra que ninguém testa.** Texto que depende de uma
-  regra mora no domínio, com teste.
-- **A cor da sombra segue o fundo, não o elemento** (`specs/05`). Preta sobre
-  preto some.
-- **Cor de série segue a identidade, não a posição no vetor.** Fala precisa ter a
-  mesma cor em todos os documentos finais.
+Se um teste falhar depois da sua mudança, **não contorne**. Três vezes neste
+projeto um teste "quebrou" e a causa era o código novo furando uma regra.
 
 ## Onde olhar primeiro
 
-1. `README.md` — como rodar, quais telas existem
+1. **`CLAUDE.md`** — as regras do projeto e como se trabalha aqui
 2. `revisao-geral.md` — o que ainda falta e por quê
-3. `roteiro-de-validacao.md` — o que precisa ser conferido com o sistema rodando
-4. `specs/` — a especificação
-5. `dominio/` — os documentos institucionais da DEX, que têm precedência
+3. `README.md` — como rodar, quais telas existem
+4. `roteiro-de-validacao.md` — o que precisa ser conferido com o sistema rodando
+5. `specs/` — a especificação
+6. `dominio/` — os documentos institucionais da DEX, que têm precedência
+
+**Spec antes de código.** Nenhuma tela, tabela ou regra entra sem estar em
+`specs/`. Decisão nova volta para a spec antes de virar arquivo — é o que mantém
+as regras num lugar só em vez de espalhadas por dez componentes. Commits e testes
+citam os códigos (`RN-01`…`RN-18`, `RF-A1`…), e é isso que permite achar, dois
+anos depois, por que uma linha existe.
