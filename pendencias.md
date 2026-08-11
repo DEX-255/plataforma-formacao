@@ -94,7 +94,7 @@ Nada aqui bloqueia o desenho continuar; cada item bloqueia uma parte específica
 A spec foi decomposta em **quinze work items** em `.specs-fire/`. O estado de cada um
 vive no arquivo dele em `.specs-fire/intents/*/work-items/` — é lá que se olha, não aqui.
 
-**Catorze concluídos**, com **390 testes** passando, lint limpo e build de produção OK:
+**Os quinze**, com **425 testes** passando, lint limpo e build de produção OK:
 
 | # | Item | O que entrou |
 |---|---|---|
@@ -112,10 +112,10 @@ vive no arquivo dele em `.specs-fire/intents/*/work-items/` — é lá que se ol
 | 12 | `presenca` | Marcação em massa, e o alarme falso da cobertura resolvido |
 | 13 | `turma-e-cobertura` | Visão de turma, perfil do corte e o gráfico de evolução |
 | 14 | `encerramento-da-edicao` | Confirmação que nomeia a consequência, e RN-13 no banco |
+| 15 | `documento-final` | A peça que a pessoa leva — palavras antes de números |
 
-**O último:**
-
-**`documento-final`** — o único que ainda passa por design doc antes do código.
+**Nenhum item de código restante.** O que falta é a passada de validação:
+`roteiro-de-validacao.md`, 147 itens em quinze fluxos.
 
 
 **O que o item 8 deixou de pé.** `RN-06` ganhou guarda no banco: depois da liberação,
@@ -239,3 +239,27 @@ faria a plataforma desmentir o que disse), e uma função que distingue "a ediç
 encerrou" de "você nunca esteve numa" — sem ela, quem terminou a formação veria
 uma mensagem de cadastro incompleto no lugar da instrução de como receber o
 documento final.
+
+**O que o item 15 deixou de pé — e `D-07` que nunca tinha sido ligado.** O
+gerador roda como script, sem sessão, e por isso precisa da `service_role`. Ao
+rodá-lo pela primeira vez ele bateu em `permission denied for table edicao`: a
+migração de RLS concedeu privilégio a `authenticated` e a mais ninguém, então a
+chave que ignora RLS **não conseguia ler nada**. `D-07` estava escrito na
+arquitetura desde o começo e nunca tinha sido exercitado.
+
+A concessão entrou como `select` e nada mais. Chave com poder sobrando é chave
+que um dia é usada para outra coisa — e se o gerador não pode apagar, um engano
+no script não leva o arquivo da formação junto (`RN-18`).
+
+Duas pendências que o documento herda:
+
+- [ ] **As fontes da marca não existem no documento avulso.** Elas vêm do build
+      do Next; o gerador roda fora dele e a pilha cai para as do sistema. Baixar
+      os arquivos para `documento/fontes/` e referenciá-los por `@font-face`
+      fecha isso — e é o que torna o PDF idêntico daqui a anos, sem depender de
+      rede. Enquanto não fechar, o documento sai tipograficamente pior do que
+      foi desenhado.
+- [ ] **Os descritores da bomba e da negociação continuam faltando.** O
+      documento já trata isso: mostra o texto e explica por que não há nota. Se
+      um dia os níveis forem escritos, essas dinâmicas passam a ter escala sem
+      precisar mexer no gerador.

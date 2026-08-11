@@ -1,8 +1,9 @@
 ---
 id: plataforma-formacao-dex
 title: Plataforma interna da Formação DEX
-status: in_progress
+status: completed
 created: 2026-08-06T00:26:01Z
+completed_at: 2026-08-11T22:38:08.240Z
 ---
 
 # Intent: Plataforma interna da Formação DEX

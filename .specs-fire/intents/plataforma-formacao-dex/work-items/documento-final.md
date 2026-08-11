@@ -4,9 +4,12 @@ title: Documento final individual
 intent: plataforma-formacao-dex
 complexity: high
 mode: validate
-status: pending
-depends_on: [encerramento-da-edicao]
+status: completed
+depends_on:
+  - encerramento-da-edicao
 created: 2026-08-06T00:26:01Z
+run_id: run-dex-013
+completed_at: 2026-08-11T22:38:08.235Z
 ---
 
 # Work Item: Documento final individual

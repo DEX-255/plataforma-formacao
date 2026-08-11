@@ -4,7 +4,8 @@ Plataforma interna do Hub de Empreendedorismo e Inovação do Instituto de Infor
 
 Os mentores registram feedback estruturado sobre cada participante ao longo dos encontros semanais da formação; cada participante acompanha a própria trajetória. No encerramento, todos recebem um documento individual com o que viveram no processo.
 
-**Estado:** 14 dos 15 work items concluídos · 390 testes passando.
+**Estado:** 15 dos 15 work items concluídos · 425 testes passando.
+**Falta a passada de validação** — ver `roteiro-de-validacao.md`.
 **Primeiro uso real:** primeira semana de setembro de 2026.
 
 ## Como rodar
@@ -33,7 +34,7 @@ Ligado por `NEXT_PUBLIC_LOGIN_LOCAL=1`, que **não existe em produção** —
 `testes/guardas-auth.test.ts` falha se vazar.
 
 ```bash
-npm test                    # 390 testes; precisa do Supabase local de pé
+npm test                    # 425 testes; precisa do Supabase local de pé
 npm run lint
 npm run build
 
@@ -101,3 +102,22 @@ As regras de negócio têm código (`RN-01` … `RN-18`) e os requisitos também
 - Sugestão prática é campo obrigatório — a diretriz 6 da DEX virou regra do sistema.
 - Os feedbacks de um encontro são liberados em bloco, uma vez por semana. Nesse mesmo instante a caixa anônima fecha e as mensagens dos participantes chegam aos mentores.
 - Ao fim do PS o acesso encerra para todos, e cada pessoa recebe seu documento.
+
+## Gerar os documentos finais
+
+Roda local, uma vez por semestre. A chave de serviço **não vive no repositório**
+(`D-07`) — exporte-a só na sessão em que for gerar:
+
+```bash
+export NEXT_PUBLIC_SUPABASE_URL=...
+export SUPABASE_SERVICE_ROLE_KEY=...
+
+npx tsx documento/cli.ts --previa   # um documento, para conferir
+npx tsx documento/cli.ts            # todos
+```
+
+O HTML sai em `documento/saida/` (fora do versionamento). O PDF é o Chrome
+imprimindo esse HTML.
+
+**Antes de enviar para qualquer pessoa, imprima um em papel e leia imaginando
+quem não passou.** É o único teste que importa nessa peça.
