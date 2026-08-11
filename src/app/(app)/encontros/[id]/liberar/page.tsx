@@ -49,7 +49,7 @@ export default async function LiberarEncontro({
     redirect(`/encontros/${encontro.id}`);
   }
 
-  const [{ data: participacoes }, { data: feedbacks }, { count: mensagens }] =
+  const [{ data: participacoes }, { data: feedbacks }, { data: mensagens }] =
     await Promise.all([
       supabase
         .from("participacao")
@@ -61,23 +61,22 @@ export default async function LiberarEncontro({
         .select("participacao_id")
         .eq("encontro_id", encontro.id),
       /**
-       * Conta por `mensagem_enviada`, **não** por `mensagem_anonima`.
+       * A contagem vem de uma função que devolve **só o inteiro**.
        *
-       * A política `mensagem_mentor_le` só devolve mensagem de encontro já
-       * liberado — e é exatamente isso que ela deve fazer. Contar ali antes da
-       * liberação devolvia zero, e a tela dizia "0 mensagens" com três no
-       * banco. Apareceu ao abrir a tela; nenhum teste pegaria, porque a
-       * consulta não erra, ela obedece.
+       * Duas coisas nesta linha, e a segunda é séria.
        *
-       * `mensagem_enviada` tem uma linha por mensagem enviada e o mentor pode
-       * lê-la (`enviada_mentor_le`). Dá o mesmo número sem tocar no texto —
-       * melhor ainda: a sessão do mentor nem chega perto do conteúdo antes da
-       * hora.
+       * Contar por `mensagem_anonima` devolvia zero: a policy só entrega
+       * mensagem de encontro já liberado, corretamente. A tela dizia "0
+       * mensagens" com três no banco — a consulta não errava, obedecia.
+       *
+       * Contar por `mensagem_enviada` resolvia o número e abria um buraco muito
+       * pior: aquela tabela tem `participacao_id`, e ler linha de lá é ler a
+       * lista de quem escreveu. Com uma mensagem no encontro, isso identifica o
+       * autor sem esforço nenhum. A leitura foi removida (migração
+       * `20260811200000`) e sobrou esta função, que não tem caminho para a
+       * identidade.
        */
-      supabase
-        .from("mensagem_enviada")
-        .select("*", { count: "exact", head: true })
-        .eq("encontro_id", encontro.id),
+      supabase.rpc("contar_mensagens_do_encontro", { p_encontro: encontro.id }),
     ]);
 
   const previa = montarPrevia({

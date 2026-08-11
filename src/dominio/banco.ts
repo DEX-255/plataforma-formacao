@@ -445,6 +445,10 @@ export type Database = {
       }
     }
     Functions: {
+      contar_mensagens_do_encontro: {
+        Args: { p_encontro: string }
+        Returns: number
+      }
       enviar_mensagem_anonima: {
         Args: { p_encontro: string; p_texto: string }
         Returns: undefined

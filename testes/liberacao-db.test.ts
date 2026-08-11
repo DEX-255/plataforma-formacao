@@ -336,18 +336,96 @@ describe("a prévia consegue contar antes de liberar", () => {
     expect(linhas).toHaveLength(0);
   });
 
-  it("mas conta pela marca de envio, que ele pode ler", async () => {
+  it("conta pela função, que devolve só o inteiro", async () => {
     const encontro = await encontroAberto();
     for (const p of PARTICIPANTES.slice(0, 3)) {
       await comoUsuarioCommit(p, `select enviar_mensagem_anonima($1,'oi')`, [encontro]);
     }
 
-    const linhas = await comoUsuario<{ n: string }>(
+    const linhas = await comoUsuario<{ n: number }>(
       MENTOR,
-      `select count(*)::int as n from mensagem_enviada where encontro_id = '${encontro}'`,
+      `select contar_mensagens_do_encontro('${encontro}') as n`,
     );
 
     expect(Number(linhas[0]?.n)).toBe(3);
+  });
+
+  /**
+   * O vazamento que este bloco fecha, encontrado ao desenhar `caixa-anonima`.
+   *
+   * A política `enviada_mentor_le` dava leitura irrestrita de
+   * `mensagem_enviada`, que tem `participacao_id`. Com uma mensagem no
+   * encontro, o mentor sabia de quem era — sem reidentificar nada, porque a
+   * tabela entregava a lista pronta. O teste de reidentificação existente
+   * passava porque atacava pelo lado difícil.
+   */
+  it("RN-08 — o mentor NÃO lista quem enviou", async () => {
+    const encontro = await encontroAberto();
+    await comoUsuarioCommit(
+      PARTICIPANTES[0]!,
+      `select enviar_mensagem_anonima($1,'critiquei um mentor')`,
+      [encontro],
+    );
+
+    const linhas = await comoUsuario(
+      MENTOR,
+      `select * from mensagem_enviada where encontro_id = '${encontro}'`,
+    );
+
+    expect(
+      linhas,
+      "O mentor leu a lista de quem enviou. Com uma mensagem no encontro, isso é o nome do autor.",
+    ).toHaveLength(0);
+  });
+
+  it("RN-08 — nem pela junção com participacao e usuario", async () => {
+    const encontro = await encontroAberto();
+    await comoUsuarioCommit(PARTICIPANTES[0]!, `select enviar_mensagem_anonima($1,'oi')`, [
+      encontro,
+    ]);
+
+    const linhas = await comoUsuario(
+      MENTOR,
+      `select u.nome from mensagem_enviada me
+         join participacao p on p.id = me.participacao_id
+         join usuario u on u.id = p.usuario_id
+        where me.encontro_id = '${encontro}'`,
+    );
+
+    expect(linhas).toHaveLength(0);
+  });
+
+  it("o participante continua vendo a própria marca — a tela precisa dizer “já enviei”", async () => {
+    const encontro = await encontroAberto();
+    await comoUsuarioCommit(PARTICIPANTES[0]!, `select enviar_mensagem_anonima($1,'oi')`, [
+      encontro,
+    ]);
+
+    const minhas = await comoUsuario(
+      PARTICIPANTES[0]!,
+      `select * from mensagem_enviada where encontro_id = '${encontro}'`,
+    );
+    const deOutro = await comoUsuario(
+      PARTICIPANTES[1]!,
+      `select * from mensagem_enviada where encontro_id = '${encontro}'`,
+    );
+
+    expect(minhas).toHaveLength(1);
+    expect(deOutro, "um participante viu que o outro enviou").toHaveLength(0);
+  });
+
+  it("a contagem só responde a mentor", async () => {
+    const encontro = await encontroAberto();
+    await comoUsuarioCommit(PARTICIPANTES[0]!, `select enviar_mensagem_anonima($1,'oi')`, [
+      encontro,
+    ]);
+
+    const linhas = await comoUsuario<{ n: number }>(
+      PARTICIPANTES[1]!,
+      `select contar_mensagens_do_encontro('${encontro}') as n`,
+    );
+
+    expect(Number(linhas[0]?.n)).toBe(0);
   });
 
   it("a marca não diz o que a pessoa escreveu — só que escreveu", async () => {
