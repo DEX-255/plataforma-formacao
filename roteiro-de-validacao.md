@@ -1,0 +1,242 @@
+# Roteiro de validação
+
+O que precisa ser conferido **por uma pessoa, com o sistema rodando**, antes da
+formação começar.
+
+Este arquivo cresce a cada work item concluído e é executado **de uma vez só, no
+fim** — não etapa a etapa. A razão é concreta: um conserto feito hoje pode
+quebrar algo entregue três itens atrás, e validar em pedaços dá a sensação de
+segurança sem a segurança. O que vale é a passada inteira, com o sistema no
+estado em que ele vai ser usado.
+
+## Como usar
+
+1. Suba o ambiente (`README.md`, seção *Como rodar*).
+2. Execute os fluxos **na ordem**. Vários dependem do estado deixado pelo anterior.
+3. Marque `[x]` no que passou. O que falhar vira item em `pendencias.md`.
+4. **Faça tudo no celular**, ou no navegador a 390px de largura. É o dispositivo
+   principal do mentor, e metade dos defeitos encontrados até aqui só aparecia lá.
+
+> **O que NÃO está aqui:** o que a suíte automatizada já prova. Ver a seção
+> *O que a suíte já garante* no fim — não vale repetir à mão o que 239 testes
+> conferem a cada `npm test`.
+
+---
+
+## Preparação
+
+- [ ] `npx supabase db reset` — banco limpo, seed aplicado
+- [ ] `npm test` passa inteiro
+- [ ] `npm run build` sem erro
+- [ ] Duas contas Google de verdade em mãos, uma delas `@discente.ufg.br`
+- [ ] Um celular físico, não só o navegador redimensionado
+
+---
+
+## F1 — Quem entra e quem não entra
+
+**Por que importa:** é a única barreira entre a turma e a avaliação nominal dela.
+Falhar aqui não é bug de tela, é vazamento.
+
+- [ ] **F1.1** Entrar com uma conta Google que **não** está na lista de
+      autorizados → recusa clara, com a instrução de procurar um mentor e usar
+      o `@discente`. Não pode criar conta vazia nem tela em branco.
+- [ ] **F1.2** Entrar com uma conta `@discente.ufg.br` autorizada → entra.
+      **Este é o teste que não pode ser descoberto no dia do encontro:** o
+      Workspace da UFG pode bloquear aplicativos de terceiros, e destravar passa
+      pelo STI.
+- [ ] **F1.3** Entrar como mentor → cai em `/encontros`. Entrar como participante
+      → cai em `/trajetoria`.
+- [ ] **F1.4** Com a pessoa logada em outra aba, remover o e-mail dela em
+      `/membros` → na **próxima ação** dela o acesso cai. Não esperar expirar
+      sessão (`RN-11`).
+- [ ] **F1.5** Remover alguém e conferir que o feedback que ela recebeu
+      **continua no banco** (`RN-18`). O documento final dela tem que continuar
+      reproduzível.
+- [ ] **F1.6** Colar uma lista de 20 e-mails de uma vez, com vírgula, ponto e
+      vírgula e quebra de linha misturados, incluindo um repetido e um inválido
+      → adiciona os válidos, ignora o repetido em silêncio, aponta o inválido.
+- [ ] **F1.7** `/membros` mostra quem **ainda não entrou**. É o que permite
+      cobrar antes do encontro 2 em vez de descobrir na hora.
+- [ ] **F1.8** Um participante tentando abrir `/membros` ou `/encontros` pelo
+      endereço direto → recusado, não tela vazia.
+
+## F2 — A landing e a porta de entrada
+
+- [ ] **F2.1** Abrir `/` no celular: nada rola na horizontal, o "DEX" gigante não
+      estoura, o símbolo aparece.
+- [ ] **F2.2** O texto da home é o aprovado ("A DEX é um centro de construção e
+      aceleração de perfis empreendedores…").
+- [ ] **F2.3** O Instagram aponta para **hub.dex**.
+- [ ] **F2.4** Em `/entrar`, o logo no topo esquerdo volta para a home.
+- [ ] **F2.5** A transição home → login mantém o fundo escuro, e a sombra do
+      card aparece (é roxa; preta sobre preto sumiria).
+
+## F3 — Criar e abrir encontro
+
+- [ ] **F3.1** Criar encontro com número, tema, data e framework → nasce em
+      `rascunho`, com o número seguinte já sugerido.
+- [ ] **F3.2** Logado como **participante**, o encontro em rascunho **não
+      aparece** em lugar nenhum.
+- [ ] **F3.3** Criar um encontro com framework **Sem avaliação** → a confirmação
+      **não** manda atribuir eixos, e em nenhuma tela ele lê como pendência.
+      Tem que ler como *cumprido* (`RN-14`).
+- [ ] **F3.4** Atribuir eixos com menos mentores do que eixos → avisa qual eixo
+      fica descoberto e **deixa salvar assim mesmo**.
+- [ ] **F3.5** Abrir o encontro → a lista mostra ele no topo com destaque, e o
+      item "Encontros" da navegação ganha o ponto.
+- [ ] **F3.6** Com dois encontros abertos em semanas diferentes, conferir que a
+      ordenação da lista continua fazendo sentido.
+
+## F4 — Registrar feedback · a tela mais importante
+
+**Por que importa:** se ela tiver fricção, nada mais acontece. Sem registro não há
+trajetória, não há cobertura, não há documento final.
+
+- [ ] **F4.1 — O cronômetro.** Em pé, com o celular numa mão, registrar um
+      feedback completo (situação, ponto, sugestão, nota) **em menos de um
+      minuto**. Cronometrar de verdade. Se passar de um minuto, o mentor
+      desiste na terceira semana.
+- [ ] **F4.2** A lista da turma põe **quem ainda não recebeu nada** no topo.
+- [ ] **F4.3** A busca fica fixa no topo e **não some ao rolar**. Testar com a
+      turma inteira, rolando até o fim.
+- [ ] **F4.4** Buscar por "joao" (sem acento) acha "João". Buscar por sobrenome
+      acha. Buscar por "davila" acha "D'Ávila".
+- [ ] **F4.5** O eixo do mentor **vem preenchido** — ele nunca escolhe (`RN-02`).
+- [ ] **F4.6** Antes do formulário aparece o que **os outros mentores** já
+      escreveram: autor, eixo e texto visível. Conferir que **não** aparece nota
+      nem observação interna de ninguém.
+- [ ] **F4.7 — A confusão que não pode acontecer.** Peça a **um mentor que nunca
+      viu a tela** para registrar um feedback, sem explicar nada. Depois
+      pergunte: *"o que dessa tela a pessoa avaliada vai ler?"* Se ele hesitar,
+      a separação dos dois blocos falhou. Este é o teste mais importante da
+      lista, e o único que não dá para automatizar.
+- [ ] **F4.8** Tentar salvar sem sugestão → a mensagem **cita a diretriz 6**, não
+      diz "campo obrigatório" (`RN-01`).
+- [ ] **F4.9** Escolher cada nota de 1 a 5 → o descritor daquele eixo aparece, e
+      a frase sobre a assimetria da escala aparece junto (`RF-D3`, `RN-16`).
+- [ ] **F4.10** "Não observado" é escolhível ao lado dos números, e a tela
+      explica que é diferente de deixar em branco (`RN-07`).
+- [ ] **F4.11** O aviso de que a nota **entra no documento final** está junto da
+      nota, visível sem rolar.
+- [ ] **F4.12 — O corredor sem sinal.** Escrever metade do feedback, **desligar o
+      Wi-Fi e os dados**, fechar o app, reabrir → o texto está lá (`D-03`).
+- [ ] **F4.13** Salvar → volta para a lista com aquele nome marcado, **sem tela
+      de confirmação** no meio.
+- [ ] **F4.14** Registrar para 5 pessoas seguidas sem sair da lista. Contar
+      quantos toques cada uma custa — esse número multiplica por 40.
+- [ ] **F4.15** Editar um feedback já salvo antes da liberação → muda tudo.
+- [ ] **F4.16** Apagar um feedback próprio antes da liberação → some.
+- [ ] **F4.17** Entrar como **outro mentor** e tentar editar feedback alheio →
+      não consegue, e a tela não oferece.
+
+## F5 — Ensaio geral · uma semana inteira
+
+Este é o fluxo que só faz sentido **depois de tudo pronto**. Ele simula um ciclo
+real, do jeito que vai acontecer em setembro.
+
+- [ ] **F5.1** Mentor cria o encontro 1 (Perfil Empreendedor, sem avaliação),
+      abre, marca presença.
+- [ ] **F5.2** Participante entra e vê o encontro 1 na trajetória **como
+      cumprido**, sem sugerir que faltou feedback (`RN-14`).
+- [ ] **F5.3** Mentor cria o encontro 2 (Oratória), atribui os três eixos a três
+      mentores diferentes, abre.
+- [ ] **F5.4** Três mentores registram feedback para as mesmas 10 pessoas, cada
+      um no eixo dele.
+- [ ] **F5.5** Participante entra **antes da liberação** → vê o encontro, **não
+      vê feedback nenhum** (`RN-05`).
+- [ ] **F5.6** Participante escreve na caixa anônima.
+- [ ] **F5.7** Participante tenta escrever uma segunda mensagem → recusado
+      (`RN-09`).
+- [ ] **F5.8** Mentor abre a tela de liberação → ela mostra quantos vão receber
+      feedback e **quantos não vão receber nenhum**. Conferir que o número está
+      certo contando à mão.
+- [ ] **F5.9** Liberar. No mesmo instante: feedback aparece para os
+      participantes, caixa anônima fecha, mensagens aparecem para os mentores.
+- [ ] **F5.10** Participante lê o feedback dele → vê situação, ponto, sugestão e
+      **o nome do mentor** (`RN-04`). **Não vê nota nem observação interna**
+      (`RN-03`). Conferir também no código-fonte da página (Ctrl+U), não só na
+      tela.
+- [ ] **F5.11** Participante tenta ver a trajetória de outro pelo endereço
+      direto → recusado (`RN-12`).
+- [ ] **F5.12** Mentor lê as mensagens anônimas → sem autor, sem horário, e a
+      ordem **não** é a de envio (`RN-08`, `RN-10`).
+- [ ] **F5.13** Mentor tenta editar o texto visível de um feedback já liberado →
+      travado, com a razão escrita. A nota continua editável (`RN-06`).
+- [ ] **F5.14** Encerrar a edição → participantes perdem o acesso, e o login
+      deles passa a explicar isso e a dizer como receber o documento (`RN-13`).
+- [ ] **F5.15** Mentor continua acessando tudo em modo arquivo.
+- [ ] **F5.16** Gerar o documento final de uma pessoa → a nota aparece **aqui,
+      pela primeira vez**, junto de toda a trajetória dela.
+- [ ] **F5.17** Imprimir o documento final em PDF → cabe, não corta texto, não
+      fica com fundo escuro desperdiçando tinta.
+
+## F6 — Mobile, em todas as telas
+
+Passar por **todas** as telas construídas, no celular físico:
+
+- [ ] **F6.1** Nenhuma rola na horizontal.
+- [ ] **F6.2** Nenhum botão ou link abaixo de 44px de altura.
+- [ ] **F6.3** Itens de lista percorridos em sequência têm 56px.
+- [ ] **F6.4** Nenhum campo com fonte abaixo de 16px (abaixo disso o iOS dá zoom
+      sozinho e o mentor perde o contexto no meio do preenchimento).
+- [ ] **F6.5** A barra inferior não cobre conteúdo nem o botão principal.
+- [ ] **F6.6** Com o teclado aberto, o campo em foco continua visível.
+- [ ] **F6.7** Testar em **iPhone e Android**, não só num.
+
+## F7 — Acessibilidade e leitura
+
+- [ ] **F7.1** Nenhum estado é comunicado só por cor — todo chip tem a palavra
+      escrita.
+- [ ] **F7.2** Navegar uma tela inteira só pelo teclado, com foco visível.
+- [ ] **F7.3** Passar o leitor de tela pelo formulário de feedback: os rótulos
+      são anunciados, e o erro da sugestão é lido junto do campo.
+- [ ] **F7.4** Aumentar a fonte do sistema para 200% → nada some nem se
+      sobrepõe.
+
+## F8 — Só dá para testar em produção
+
+Não têm como ser validados localmente. Entram no dia em que as contas existirem.
+
+- [ ] **F8.1** `supabase/bootstrap.sql` rodado **uma vez** no banco de produção,
+      com o e-mail certo — o da conta Google com que você realmente clica em
+      "entrar".
+- [ ] **F8.2** Depois do bootstrap, o primeiro mentor entra e consegue cadastrar
+      os outros por `/membros`.
+- [ ] **F8.3** A tela de consentimento do Google mostra **a DEX** como autora do
+      aplicativo, não uma pessoa física.
+- [ ] **F8.4** `NEXT_PUBLIC_LOGIN_LOCAL` **não existe** no ambiente de produção.
+      Conferir que a tela de login **não** mostra o formulário de senha.
+- [ ] **F8.5** A `service_role` não aparece em nenhuma variável exposta ao
+      navegador (`D-07`).
+- [ ] **F8.6** Carregar a tela de registrar feedback no 4G de verdade, no
+      corredor do INF, e medir. É o cenário real.
+
+---
+
+## O que a suíte já garante
+
+Não repetir à mão. Estes rodam a cada `npm test` e falham sozinhos:
+
+| Área | O que já está coberto |
+|---|---|
+| `RN-03` | O participante não lê a tabela `feedback`; a view não tem as colunas do bloco interno; nenhum componente de cliente recebe `nota` ou `observacao_interna` |
+| `RN-08` / `RN-10` | Não existe coluna nem **ordem física** ligando mensagem a autor — inclui o teste de reidentificação com acesso total ao banco |
+| `RN-12` | Participante não alcança dado de outro, nem pedindo pelo id |
+| `RN-06` | Bloco visível travado após a liberação, no banco; bloco interno segue editável |
+| Ciclo do encontro | Toda transição inválida recusada pelo banco, não só escondida na tela |
+| `RN-01`, `RN-07`, `RN-16` | Regras de domínio, uma função por regra |
+| Design system | Nenhum hex fora dos dois arquivos autorizados; todo utilitário de toque gera CSS de verdade |
+| Login local | A suíte falha se `NEXT_PUBLIC_LOGIN_LOCAL` vazar para produção |
+
+**O que a suíte não pode provar** é justamente o que este roteiro cobre: se o
+mentor entende qual bloco a pessoa vai ler, se o registro cabe em um minuto com
+o celular na mão, e se o texto sobrevive ao corredor sem sinal.
+
+---
+
+## Registro das passadas
+
+| Data | Quem | Até onde foi | O que falhou |
+|---|---|---|---|
+| — | — | — | — |

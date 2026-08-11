@@ -14,6 +14,7 @@ decisão que afeta a vida deles.** Isso dita o cuidado de tudo abaixo.
 3. `.specs-fire/intents/*/work-items/` — o estado de cada item (o `status:` no frontmatter)
 4. `specs/` — a especificação, começando por `specs/README.md`
 5. `dominio/` — documentos institucionais da DEX
+6. `roteiro-de-validacao.md` — o que uma pessoa precisa conferir antes de setembro
 
 **Precedência:** `dominio/` > `specs/` > código. Divergência é defeito, não ambiguidade.
 
@@ -25,6 +26,20 @@ lugar só. Commits e testes citam os códigos (`RN-01`…`RN-18`, `RF-A1`…).
 
 `src/dominio/regras.ts` é a **única casa das regras de negócio**. Nenhum componente decide
 sozinho se um feedback pode ser editado: a tela pergunta, a regra responde.
+
+## Validação acontece no fim, de uma vez
+
+**Não peça ao Fred para testar a interface item a item.** Ao concluir um work
+item, acrescente os fluxos que aquele item exige a `roteiro-de-validacao.md` e
+siga adiante. A passada completa acontece quando tudo estiver pronto.
+
+O motivo é concreto: um conserto feito agora pode quebrar algo entregue três
+itens atrás, e validar em pedaços dá a sensação de segurança sem a segurança.
+Medir a interface durante a construção continua valendo — o que muda é **de
+quem** é o tempo gasto.
+
+Ao terminar um item: derrube o servidor e os contêineres. Não deixe `localhost`
+de pé "para o caso de".
 
 ## As quatro regras cuja violação é irreversível
 
