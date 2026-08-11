@@ -6,6 +6,12 @@ Uma plataforma interna para a Formação DEX: os mentores registram feedback est
 
 Não é um site institucional com área logada. É uma ferramenta de trabalho com uma página pública mínima na frente.
 
+**A plataforma registra, não produz.** Tudo que aparece aqui foi dito na dinâmica, presencialmente. O sistema dá endereço e memória a esse feedback; ele não cria feedback novo, não pede que o mentor escreva sobre quem não observou, e não promete cobertura a ninguém.
+
+A consequência prática decide texto de tela: **ausência de registro é ausência de conversa, e isso é normal.** Um participante que não recebeu feedback num encontro não foi esquecido pelo sistema — ninguém falou com ele naquele dia, e a plataforma não tem o que inventar. As telas do participante dizem isso com naturalidade, sem pedir desculpa e sem prometer que vem depois. Forçar o contrário produziria enchimento, que é o que `RN-15` existe para evitar.
+
+Isso não torna a cobertura irrelevante: o problema 3 abaixo continua valendo, e é **na tela do mentor** que a desigualdade de atenção aparece para ser corrigida — enquanto ainda dá tempo, antes de virar fato consumado.
+
 ## O problema
 
 A DEX já tem uma cultura de feedback escrita e um sistema de papéis de avaliação bem definido. O que não existe é onde isso mora. Hoje o feedback acontece na dinâmica, oralmente, e evapora. Três consequências:
