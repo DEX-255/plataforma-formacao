@@ -56,8 +56,28 @@ export async function exigirMentor(): Promise<Sessao> {
   return sessao;
 }
 
+/**
+ * `RN-13` — a edição encerrada derruba o acesso **na sessão já aberta**.
+ *
+ * A RLS já garante que nada é lido depois do encerramento, e é isso que
+ * importa. Mas ela derruba a leitura *em silêncio*: sem participação visível, a
+ * tela não distingue "a formação acabou" de "você nunca esteve numa edição", e
+ * quem terminou o processo veria uma mensagem de cadastro incompleto no lugar
+ * da instrução de como receber o documento final.
+ *
+ * `situacao_do_participante()` devolve só o rótulo — nenhuma linha, nenhum id —
+ * e é o que permite mandar a pessoa para a recusa certa.
+ */
 export async function exigirParticipante(): Promise<Sessao> {
   const sessao = await exigirSessao();
   if (sessao.papel !== "participante") redirect(telaInicialDoPapel(sessao.papel));
+
+  const supabase = await clienteServidor();
+  const { data: situacao } = await supabase.rpc("situacao_do_participante");
+
+  if (situacao === "encerrada") {
+    redirect("/entrar?recusa=edicao-encerrada");
+  }
+
   return sessao;
 }

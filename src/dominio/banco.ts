@@ -458,6 +458,7 @@ export type Database = {
         Args: { p_avatar?: string; p_nome: string }
         Returns: Json
       }
+      situacao_do_participante: { Args: never; Returns: string }
     }
     Enums: {
       framework: "oratoria" | "bomba" | "negociacao" | "nenhum"

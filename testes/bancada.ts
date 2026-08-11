@@ -33,11 +33,30 @@ export async function limparTabelas(
   db: Client,
   tabelas: readonly string[] = TABELAS_DO_DOMINIO,
 ): Promise<void> {
-  await db.query("set session_replication_role = replica");
-  try {
+  await semGatilhos(db, async () => {
     for (const tabela of tabelas) {
       await db.query(`delete from ${tabela}`);
     }
+  });
+}
+
+/**
+ * Desfazer um estado que o produto **não** desfaz.
+ *
+ * Encerrar edição e liberar encontro são de mão única, garantidos por gatilho.
+ * Um teste que precise voltar ao estado anterior — para exercitar outra coisa,
+ * não para burlar a regra — usa isto e diz por quê na chamada.
+ *
+ * Vale a mesma observação de `limparTabelas`: precisar disto é a prova de que a
+ * trava funciona até para quem tem a chave do banco.
+ */
+export async function semGatilhos(
+  db: Client,
+  acao: () => Promise<void>,
+): Promise<void> {
+  await db.query("set session_replication_role = replica");
+  try {
+    await acao();
   } finally {
     await db.query("set session_replication_role = origin");
   }

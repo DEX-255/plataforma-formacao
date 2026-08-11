@@ -4,9 +4,12 @@ title: Encerramento da edição
 intent: plataforma-formacao-dex
 complexity: medium
 mode: confirm
-status: pending
-depends_on: [turma-e-cobertura]
+status: completed
+depends_on:
+  - turma-e-cobertura
 created: 2026-08-06T00:26:01Z
+run_id: run-dex-012
+completed_at: 2026-08-11T21:28:20.368Z
 ---
 
 # Work Item: Encerramento da edição

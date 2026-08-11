@@ -140,11 +140,13 @@ intents:
         completed_at: 2026-08-08T21:06:25.390Z
       - id: encerramento-da-edicao
         title: Encerramento da edição
-        status: pending
+        status: completed
         complexity: medium
         mode: confirm
         depends_on:
           - turma-e-cobertura
+        run_id: run-dex-012
+        completed_at: 2026-08-11T21:28:20.368Z
       - id: documento-final
         title: Documento final individual
         status: pending
@@ -249,3 +251,11 @@ runs:
           mode: confirm
       started: 2026-08-11T21:19:27.020Z
       completed: 2026-08-11T21:19:27.112Z
+    - id: run-dex-012
+      scope: single
+      work_items:
+        - id: encerramento-da-edicao
+          intent: plataforma-formacao-dex
+          mode: confirm
+      started: 2026-08-11T21:28:20.278Z
+      completed: 2026-08-11T21:28:20.368Z

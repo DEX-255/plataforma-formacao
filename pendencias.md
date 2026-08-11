@@ -94,7 +94,7 @@ Nada aqui bloqueia o desenho continuar; cada item bloqueia uma parte específica
 A spec foi decomposta em **quinze work items** em `.specs-fire/`. O estado de cada um
 vive no arquivo dele em `.specs-fire/intents/*/work-items/` — é lá que se olha, não aqui.
 
-**Treze concluídos**, com **366 testes** passando, lint limpo e build de produção OK:
+**Catorze concluídos**, com **390 testes** passando, lint limpo e build de produção OK:
 
 | # | Item | O que entrou |
 |---|---|---|
@@ -111,12 +111,12 @@ vive no arquivo dele em `.specs-fire/intents/*/work-items/` — é lá que se ol
 | 11 | `caixa-anonima` | Envio anônimo, leitura embaralhada, e o vazamento fechado |
 | 12 | `presenca` | Marcação em massa, e o alarme falso da cobertura resolvido |
 | 13 | `turma-e-cobertura` | Visão de turma, perfil do corte e o gráfico de evolução |
+| 14 | `encerramento-da-edicao` | Confirmação que nomeia a consequência, e RN-13 no banco |
 
-**Os dois restantes, em ordem de dependência:**
+**O último:**
 
-**`encerramento-da-edicao`** → `documento-final`
+**`documento-final`** — o único que ainda passa por design doc antes do código.
 
-`documento-final` ainda passa por design doc antes do código.
 
 **O que o item 8 deixou de pé.** `RN-06` ganhou guarda no banco: depois da liberação,
 o bloco visível não é reescrito nem apagado nem por quem tem acesso direto — o texto
@@ -222,3 +222,20 @@ normal e contraste. O que reprovou está registrado em `globals.css` para ningu�
 A tela de turma mostra **"sem nenhum feedback"** além de "abaixo da cobertura".
 O segundo é relativo e cala quando a turma inteira está em zero; o primeiro não
 cala nunca, e ao ver rodando ficou claro que é ele que o mentor precisa enxergar.
+
+**O que o item 14 deixou de pé — e um furo de `RN-13` fechado.** O encerramento
+revogava o acesso na leitura (a RLS já fazia isso, e estava testado), mas
+`enviar_mensagem_anonima` é `security definer` e **passa por cima da RLS**: ela
+lia `participacao` direto e só exigia que o encontro estivesse aberto. Encerrar
+a edição com um encontro ainda aberto deixava o participante continuar
+escrevendo na caixa, depois de a plataforma ter avisado que o acesso acabou.
+
+Foi um teste de encerramento que achou, não revisão. É a armadilha clássica do
+`security definer`: **quem pula a RLS herda a obrigação de repetir as regras que
+ela aplicava.** Vale reler as outras funções desse tipo com essa lente.
+
+Duas coisas mais entraram: o ciclo `ativa → encerrada` ganhou gatilho (reabrir
+faria a plataforma desmentir o que disse), e uma função que distingue "a edição
+encerrou" de "você nunca esteve numa" — sem ela, quem terminou a formação veria
+uma mensagem de cadastro incompleto no lugar da instrução de como receber o
+documento final.

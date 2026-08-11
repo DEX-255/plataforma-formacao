@@ -66,6 +66,13 @@ const IconeTurma = (
   </svg>
 );
 
+const IconeEncerramento = (
+  <svg viewBox="0 0 24 24" fill="none" aria-hidden className="size-5">
+    <rect x="4" y="10" width="16" height="10" rx="2" stroke="currentColor" strokeWidth="2" />
+    <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+  </svg>
+);
+
 const DESTINOS: Destino[] = [
   {
     href: "/encontros",
@@ -87,6 +94,15 @@ const DESTINOS: Destino[] = [
     grupo: "GESTÃO",
     noCelular: false,
     icone: IconeMembros,
+  },
+  {
+    href: "/encerrar",
+    rotulo: "Encerramento",
+    grupo: "GESTÃO",
+    // Fora da barra do celular de propósito: é ação rara, pesada e sem volta.
+    // Não pertence ao alcance do polegar.
+    noCelular: false,
+    icone: IconeEncerramento,
   },
 ];
 

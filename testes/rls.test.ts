@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { Client } from "pg";
-import { limparTabelas } from "./bancada";
+import { limparTabelas, semGatilhos } from "./bancada";
 
 /**
  * As regras invariantes, testadas contra o banco de verdade.
@@ -364,14 +364,22 @@ describe("RN-13 — encerrar a edição derruba o acesso", () => {
     expect(feedbacks).toHaveLength(0);
     expect(participacoes).toHaveLength(0);
 
-    await db.query("update edicao set status='ativa' where id=$1", [edicao]);
+    // Reabrir não é operação do produto (gatilho `edicao_transicao`); aqui é
+    // só arrumar a bancada para os testes seguintes.
+    await semGatilhos(db, async () => {
+      await db.query("update edicao set status='ativa' where id=$1", [edicao]);
+    });
   });
 
   it("o mentor continua acessando em modo arquivo", async () => {
     await db.query("update edicao set status='encerrada' where id=$1", [edicao]);
     const linhas = await comoUsuario(MENTOR, "select * from feedback");
     expect(linhas).toHaveLength(2);
-    await db.query("update edicao set status='ativa' where id=$1", [edicao]);
+    // Reabrir não é operação do produto (gatilho `edicao_transicao`); aqui é
+    // só arrumar a bancada para os testes seguintes.
+    await semGatilhos(db, async () => {
+      await db.query("update edicao set status='ativa' where id=$1", [edicao]);
+    });
   });
 });
 
