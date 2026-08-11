@@ -45,6 +45,17 @@ custo desprezível.
 É a mesma ideia do `ordem_aleatoria` da spec, levada até onde ela precisava ir: não basta
 **exibir** embaralhado, precisa **estar** embaralhado.
 
+> **Correção, na implementação de `liberacao-do-encontro`.** Este documento dizia que o
+> `CLUSTER` teria de rodar **fora** de transação, "porque não roda dentro de função", e o
+> comentário na migração de RLS repetia isso. Está errado, verificado neste Postgres:
+> `CLUSTER <tabela> USING <índice>` roda em transação e dentro de plpgsql — o que não roda
+> é o `CLUSTER` sem argumentos.
+>
+> A diferença não é de elegância. Fora da transação existiria uma janela entre o commit do
+> status e o `CLUSTER` em que as mensagens já estariam legíveis para os mentores **na ordem
+> de inserção** — exatamente o vazamento que a medida fecha, e no único instante em que
+> alguém teria motivo para olhar. O `CLUSTER` agora vive dentro de `liberar_encontro()`.
+
 ## Camadas, e o que cada uma cobre
 
 ```

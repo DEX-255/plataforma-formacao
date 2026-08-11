@@ -287,8 +287,11 @@ grant execute on function public.liberar_encontro(uuid) to authenticated;
 
 -- Reordenação física das mensagens. Ver o design doc: a ausência de coluna não
 -- basta, porque a ordem física das linhas (ctid) das duas tabelas é a mesma
--- ordem de inserção, e mensagem_enviada TEM o participacao_id. Rodar depois de
--- liberar, antes de qualquer mentor ler.
--- Fora de transação de propósito: CLUSTER não roda dentro de função.
+-- ordem de inserção, e mensagem_enviada TEM o participacao_id.
+--
+-- Onde isso acontece: dentro de `liberar_encontro()`, na mesma transação que
+-- muda o status (migração 20260811180000). A versão original deste comentário
+-- dizia que CLUSTER não roda dentro de função e teria de ficar fora da
+-- transação — está errado, e fora dela haveria uma janela de reidentificação.
 comment on index mensagem_anonima_ordem_idx is
   'Usado por: CLUSTER mensagem_anonima USING mensagem_anonima_ordem_idx';

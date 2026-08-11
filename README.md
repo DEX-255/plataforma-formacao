@@ -4,7 +4,7 @@ Plataforma interna do Hub de Empreendedorismo e Inovação do Instituto de Infor
 
 Os mentores registram feedback estruturado sobre cada participante ao longo dos encontros semanais da formação; cada participante acompanha a própria trajetória. No encerramento, todos recebem um documento individual com o que viveram no processo.
 
-**Estado:** 9 dos 15 work items concluídos · 266 testes passando.
+**Estado:** 10 dos 15 work items concluídos · 291 testes passando.
 **Primeiro uso real:** primeira semana de setembro de 2026.
 
 ## Como rodar
@@ -33,7 +33,7 @@ Ligado por `NEXT_PUBLIC_LOGIN_LOCAL=1`, que **não existe em produção** —
 `testes/guardas-auth.test.ts` falha se vazar.
 
 ```bash
-npm test                    # 266 testes; precisa do Supabase local de pé
+npm test                    # 291 testes; precisa do Supabase local de pé
 npm run lint
 npm run build
 
@@ -45,11 +45,12 @@ npx supabase stop           # libera os contêineres
 `/entrar?recusa=edicao-encerrada` · `/membros` · `/encontros` ·
 `/encontros/[id]` · `/encontros/[id]/eixos` ·
 `/encontros/[id]/feedback/[participacao]` ·
+`/encontros/[id]/liberar` ·
 `/trajetoria` · `/trajetoria/encontro/[id]`.
 
-**Mentor** — entra e cai em `/encontros`. Cria encontro, atribui eixos, abre e
-registra feedback pelo painel da turma. Falta a marcação de presença (`presenca`)
-e a liberação semanal (`liberacao-do-encontro`).
+**Mentor** — entra e cai em `/encontros`. Cria encontro, atribui eixos, abre,
+registra feedback pelo painel da turma e libera o encontro no fim da semana.
+Falta a marcação de presença (`presenca`) e a visão de turma (`turma-e-cobertura`).
 
 **Participante** — entra e vê a própria trajetória, com os feedbacks dos encontros
 já liberados, agrupados por eixo. Falta a caixa anônima (`caixa-anonima`).

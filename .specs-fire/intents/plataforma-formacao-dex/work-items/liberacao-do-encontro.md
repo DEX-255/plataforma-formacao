@@ -4,9 +4,12 @@ title: Liberação semanal do encontro
 intent: plataforma-formacao-dex
 complexity: medium
 mode: confirm
-status: pending
-depends_on: [trajetoria-do-participante]
+status: completed
+depends_on:
+  - trajetoria-do-participante
 created: 2026-08-06T00:26:01Z
+run_id: run-dex-008
+completed_at: 2026-08-11T20:22:42.964Z
 ---
 
 # Work Item: Liberação semanal do encontro

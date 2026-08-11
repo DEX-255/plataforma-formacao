@@ -94,7 +94,7 @@ Nada aqui bloqueia o desenho continuar; cada item bloqueia uma parte específica
 A spec foi decomposta em **quinze work items** em `.specs-fire/`. O estado de cada um
 vive no arquivo dele em `.specs-fire/intents/*/work-items/` — é lá que se olha, não aqui.
 
-**Nove concluídos**, com **266 testes** passando, lint limpo e build de produção OK:
+**Dez concluídos**, com **291 testes** passando, lint limpo e build de produção OK:
 
 | # | Item | O que entrou |
 |---|---|---|
@@ -107,11 +107,12 @@ vive no arquivo dele em `.specs-fire/intents/*/work-items/` — é lá que se ol
 | 7 | `edicao-e-encontros` | `/encontros`, painel, atribuição de eixos, navegação do mentor |
 | 8 | `registrar-feedback` | Painel da turma com busca, formulário, nota com descritor |
 | 9 | `trajetoria-do-participante` | Linha do tempo e encontro em detalhe, agrupado por eixo |
+| 10 | `liberacao-do-encontro` | Prévia com os números, confirmação digitada, liberação atômica |
 
-**Os seis restantes, em ordem de dependência:**
+**Os cinco restantes, em ordem de dependência:**
 
-**`liberacao-do-encontro`** → `caixa-anonima` · `presenca` → `turma-e-cobertura` →
-`encerramento-da-edicao` → `documento-final`
+**`caixa-anonima`** · `presenca` → `turma-e-cobertura` → `encerramento-da-edicao` →
+`documento-final`
 
 `caixa-anonima` e `documento-final` ainda passam por design doc antes do código.
 
@@ -136,6 +137,19 @@ Nenhum estado da trajetória é um vazio ambíguo — há teste que percorre as 
 combinações de estado e framework e exige explicação escrita em toda uma que não
 tenha conteúdo. O caso mais delicado é o encontro liberado em que ninguém escreveu
 para aquela pessoa; **vale reler essa frase em voz alta na validação** (F5.5).
+
+**O que o item 10 deixou de pé.** A liberação virou atômica de verdade: o `CLUSTER`
+que garante `RN-08` passou a rodar **dentro** de `liberar_encontro()`, na mesma
+transação que muda o estado. O design doc de `esquema-e-rls` dizia que ele teria de
+rodar fora porque "não roda dentro de função" — está errado, e fora dela existiria
+uma janela em que as mensagens já seriam legíveis aos mentores **na ordem de
+inserção**, exatamente o vazamento que a medida fecha. O design doc foi corrigido.
+
+Um defeito que só apareceu abrindo a tela: a prévia contava as mensagens anônimas
+pela tabela `mensagem_anonima`, que a política só devolve depois da liberação —
+mostrava "0 mensagens" com três no banco. A consulta não errava, obedecia. Agora
+conta pela marca de envio, e a sessão do mentor nem chega perto do texto antes da
+hora.
 
 **O que o item 7 deixou de pé.** O ciclo `rascunho → aberto → liberado` agora é
 garantido por gatilho no banco, não por checagem na tela: voltar de `liberado` é

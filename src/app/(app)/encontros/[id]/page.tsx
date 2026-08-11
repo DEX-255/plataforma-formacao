@@ -11,6 +11,7 @@ import { ListaDaTurma } from "./ListaDaTurma";
 import {
   estadoDoEncontro,
   podeAbrir,
+  podeLiberar,
   precisaAtribuirEixos,
   conferirAtribuicoes,
   atribuicaoEstaCompleta,
@@ -307,6 +308,29 @@ export default async function PainelDoEncontro({
           )}
 
           <ListaDaTurma encontroId={encontro.id} linhas={turma} />
+        </section>
+      )}
+
+      {/* RF-B4 — o ritual semanal. Fica no fim de propósito: é a última coisa
+          que se faz com o encontro, e não deve competir com a lista da turma
+          enquanto ainda há gente para escrever. */}
+      {podeLiberar(encontro) && (
+        <section className="flex flex-col gap-3 rounded-cartao border border-borda bg-superficie p-5">
+          <h2 className="font-display font-semibold text-titulo-secao text-papel">
+            Liberar este encontro
+          </h2>
+          <p className="text-corpo text-neutro">
+            Publica os feedbacks para os participantes, fecha a caixa anônima e
+            revela as mensagens aos mentores — tudo ao mesmo tempo, e sem volta.
+          </p>
+          <div>
+            <Link
+              href={`/encontros/${encontro.id}/liberar`}
+              className="inline-flex min-h-toque items-center rounded-pilula border border-borda px-5 text-secundario text-papel transition-colors duration-150 hover:border-borda-forte"
+            >
+              Ver o que vai acontecer →
+            </Link>
+          </div>
         </section>
       )}
 
