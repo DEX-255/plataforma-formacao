@@ -4,6 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { Chip } from "@/componentes/ui";
 import { filtrarPorNome, ordenarTurma, type LinhaDaTurma } from "@/dominio/painel";
+import {
+  ausenciaExplicaFaltaDeFeedback,
+  ROTULO_DE_PRESENCA,
+} from "@/dominio/presenca";
 
 /**
  * A lista da turma — `RF-D5`.
@@ -67,16 +71,23 @@ export function ListaDaTurma({
                     {l.nome}
                   </span>
                   <span className="block text-secundario text-neutro">
-                    {l.recebidos === 0
-                      ? "ninguém escreveu ainda"
-                      : l.recebidos === 1
-                        ? "1 feedback"
-                        : `${l.recebidos} feedbacks`}
+                    {/* RF-C2 — quem faltou aparece como falta, não como buraco
+                        de atenção. "Ninguém escreveu ainda" sob o nome de quem
+                        não veio é uma cobrança pelo impossível. */}
+                    {ausenciaExplicaFaltaDeFeedback(l.presenca)
+                      ? ROTULO_DE_PRESENCA[l.presenca!]
+                      : l.recebidos === 0
+                        ? "ninguém escreveu ainda"
+                        : l.recebidos === 1
+                          ? "1 feedback"
+                          : `${l.recebidos} feedbacks`}
                   </span>
                 </span>
 
                 {/* Estado nunca é só cor: a palavra vai escrita. */}
-                {l.euEscrevi ? (
+                {ausenciaExplicaFaltaDeFeedback(l.presenca) ? (
+                  <Chip tom="neutro">não veio</Chip>
+                ) : l.euEscrevi ? (
                   <Chip tom="sucesso">escrevi</Chip>
                 ) : (
                   <Chip tom="neutro">falta</Chip>

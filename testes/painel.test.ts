@@ -13,12 +13,14 @@ const pessoa = (
   nome: string,
   recebidos: number,
   euEscrevi = false,
+  presenca: LinhaDaTurma["presenca"] = null,
 ): LinhaDaTurma => ({
   participacaoId: nome.toLowerCase(),
   nome,
   avatarUrl: null,
   recebidos,
   euEscrevi,
+  presenca,
 });
 
 describe("ordenação — RF-D5", () => {
@@ -133,6 +135,7 @@ describe("cobertura — o número que incomoda", () => {
     expect(coberturaDaTurma(turma)).toEqual({
       total: 4,
       semNenhum: 2,
+      faltaram: 0,
       euEscrevi: 1,
     });
   });
@@ -143,6 +146,66 @@ describe("cobertura — o número que incomoda", () => {
   });
 
   it("turma vazia não quebra", () => {
-    expect(coberturaDaTurma([])).toEqual({ total: 0, semNenhum: 0, euEscrevi: 0 });
+    expect(coberturaDaTurma([])).toEqual({
+      total: 0,
+      semNenhum: 0,
+      faltaram: 0,
+      euEscrevi: 0,
+    });
+  });
+});
+
+/**
+ * `RF-C2` — sem isto, a tela de cobertura vira alarme falso toda semana. Um
+ * alarme que dispara sem motivo passa a ser ignorado, inclusive quando estiver
+ * certo.
+ */
+describe("RF-C2 — quem faltou não é buraco de atenção", () => {
+  it("ausente sem feedback sai da conta que incomoda", () => {
+    const turma = [
+      pessoa("Ana", 0, false, "ausente"),
+      pessoa("Bruno", 0, false, "presente"),
+    ];
+
+    const c = coberturaDaTurma(turma);
+    expect(c.semNenhum, "quem faltou entrou no alarme").toBe(1);
+    expect(c.faltaram).toBe(1);
+  });
+
+  it("falta justificada também sai", () => {
+    const turma = [pessoa("Ana", 0, false, "justificado")];
+    expect(coberturaDaTurma(turma).semNenhum).toBe(0);
+    expect(coberturaDaTurma(turma).faltaram).toBe(1);
+  });
+
+  it("quem ainda não foi marcado CONTINUA na conta", () => {
+    // Não saber se a pessoa veio é motivo para olhar, não para relaxar.
+    const turma = [pessoa("Ana", 0, false, null)];
+    expect(coberturaDaTurma(turma).semNenhum).toBe(1);
+    expect(coberturaDaTurma(turma).faltaram).toBe(0);
+  });
+
+  it("quem faltou vai para o fim da lista, não para o topo", () => {
+    // Sem isto ela subiria justamente por não ter feedback, e a lista mandaria
+    // o mentor escrever sobre quem ele não teve como observar.
+    const turma = [
+      pessoa("Ana", 0, false, "ausente"),
+      pessoa("Bruno", 2, false, "presente"),
+      pessoa("Carla", 0, false, "presente"),
+    ];
+
+    expect(ordenarTurma(turma).map((l) => l.nome)).toEqual([
+      "Carla",
+      "Bruno",
+      "Ana",
+    ]);
+  });
+
+  it("turma inteira ausente não dispara alarme nenhum", () => {
+    const turma = [
+      pessoa("Ana", 0, false, "ausente"),
+      pessoa("Bruno", 0, false, "ausente"),
+    ];
+    expect(coberturaDaTurma(turma).semNenhum).toBe(0);
   });
 });

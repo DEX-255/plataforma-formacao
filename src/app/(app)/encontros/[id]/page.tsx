@@ -7,6 +7,7 @@ import { Chip } from "@/componentes/ui";
 import { FRAMEWORKS, acharEixo } from "@/dominio/frameworks";
 import { eixoDoMentorNoEncontro, encontroAceitaFeedback } from "@/dominio/regras";
 import { coberturaDaTurma, type LinhaDaTurma } from "@/dominio/painel";
+import { podeMarcarPresenca } from "@/dominio/presenca";
 import { ListaDaTurma } from "./ListaDaTurma";
 import {
   estadoDoEncontro,
@@ -47,8 +48,13 @@ export default async function PainelDoEncontro({
 
   if (!encontro) notFound();
 
-  const [{ data: atribuicoes }, { data: mentores }, { data: participacoes }, { data: feedbacks }] =
-    await Promise.all([
+  const [
+    { data: atribuicoes },
+    { data: mentores },
+    { data: participacoes },
+    { data: feedbacks },
+    { data: presencas },
+  ] = await Promise.all([
       supabase.from("atribuicao_eixo").select("*").eq("encontro_id", encontro.id),
       supabase.from("usuario").select("*").eq("papel", "mentor"),
       supabase
@@ -63,7 +69,15 @@ export default async function PainelDoEncontro({
         .from("feedback")
         .select("participacao_id, mentor_id")
         .eq("encontro_id", encontro.id),
+      supabase
+        .from("presenca")
+        .select("participacao_id, status")
+        .eq("encontro_id", encontro.id),
     ]);
+
+  const presencaDe = new Map(
+    (presencas ?? []).map((p) => [p.participacao_id, p.status]),
+  );
 
   const turma: LinhaDaTurma[] = (participacoes ?? [])
     .filter((p) => p.usuario)
@@ -75,6 +89,7 @@ export default async function PainelDoEncontro({
       euEscrevi: (feedbacks ?? []).some(
         (f) => f.participacao_id === p.id && f.mentor_id === sessao.usuario.id,
       ),
+      presenca: presencaDe.get(p.id) ?? null,
     }));
 
   const cobertura = coberturaDaTurma(turma);
@@ -298,16 +313,49 @@ export default async function PainelDoEncontro({
             </p>
           </div>
 
-          {/* O número que incomoda, e ainda dá tempo de consertar. */}
+          {/* O número que incomoda, e ainda dá tempo de consertar. RF-C2: quem
+              faltou já saiu desta conta, senão o alarme dispararia toda semana
+              sem motivo e o mentor pararia de olhar para ele. */}
           {cobertura.semNenhum > 0 && (
             <p className="text-secundario text-atencao">
               {cobertura.semNenhum === 1
-                ? "1 pessoa não recebeu feedback de ninguém neste encontro."
-                : `${cobertura.semNenhum} pessoas não receberam feedback de ninguém neste encontro.`}
+                ? "1 pessoa veio e não recebeu feedback de ninguém."
+                : `${cobertura.semNenhum} pessoas vieram e não receberam feedback de ninguém.`}
+            </p>
+          )}
+
+          {cobertura.faltaram > 0 && (
+            <p className="text-secundario text-neutro">
+              {cobertura.faltaram === 1
+                ? "1 pessoa não veio."
+                : `${cobertura.faltaram} pessoas não vieram.`}
             </p>
           )}
 
           <ListaDaTurma encontroId={encontro.id} linhas={turma} />
+        </section>
+      )}
+
+      {/* RF-C1 — presença. Antes da liberação, e por isso vem antes do bloco
+          de liberar: é uma das coisas a fechar na semana. */}
+      {podeMarcarPresenca(encontro) && encontro.status !== "rascunho" && (
+        <section className="flex flex-col gap-3 rounded-cartao border border-borda bg-superficie p-5">
+          <h2 className="font-display font-semibold text-titulo-secao text-papel">
+            Presença
+          </h2>
+          <p className="text-corpo text-neutro">
+            {cobertura.faltaram > 0
+              ? `${cobertura.faltaram} ${cobertura.faltaram === 1 ? "pessoa marcada como ausente" : "pessoas marcadas como ausentes"}.`
+              : "Marque quem veio — é o que impede a cobertura de cobrar feedback de quem faltou."}
+          </p>
+          <div>
+            <Link
+              href={`/encontros/${encontro.id}/presenca`}
+              className="inline-flex min-h-toque items-center rounded-pilula border border-borda px-5 text-secundario text-papel transition-colors duration-150 hover:border-borda-forte"
+            >
+              Marcar presença →
+            </Link>
+          </div>
         </section>
       )}
 

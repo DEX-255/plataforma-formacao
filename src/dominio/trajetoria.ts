@@ -2,6 +2,9 @@ import type { Encontro, FeedbackVisivel, StatusPresenca } from "./tipos";
 import { eixosDe, acharEixo, type Eixo, type Framework } from "./frameworks";
 import { encontroTemAvaliacao } from "./regras";
 
+/** Mora em `presenca.ts` — a trajetória só exibe. */
+export { ROTULO_DE_PRESENCA } from "./presenca";
+
 /**
  * A trajetória do participante — `RF-E1`, `RF-E2`, `RF-E3`.
  *
@@ -176,9 +179,3 @@ export const TRAJETORIA_VAZIA = {
     "Esta tela é o registro do que aconteceu presencialmente, não um canal à parte. Nada aqui é nota ou classificação.",
   ],
 } as const;
-
-export const ROTULO_DE_PRESENCA: Record<StatusPresenca, string> = {
-  presente: "presente",
-  ausente: "ausente",
-  justificado: "falta justificada",
-};

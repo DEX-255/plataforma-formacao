@@ -1,3 +1,6 @@
+import type { StatusPresenca } from "./tipos";
+import { ausenciaExplicaFaltaDeFeedback } from "./presenca";
+
 /**
  * O painel do encontro — `RF-D5`.
  *
@@ -14,6 +17,8 @@ export type LinhaDaTurma = {
   recebidos: number;
   /** Já escrevi para esta pessoa neste encontro. */
   euEscrevi: boolean;
+  /** `null` enquanto ninguém marcou. Ver `RF-C2`. */
+  presenca: StatusPresenca | null;
 };
 
 /**
@@ -30,8 +35,14 @@ export type LinhaDaTurma = {
  * que muda sozinha faz o mentor perder o lugar onde estava.
  */
 export function ordenarTurma(linhas: readonly LinhaDaTurma[]): LinhaDaTurma[] {
+  const faltou = (l: LinhaDaTurma) => ausenciaExplicaFaltaDeFeedback(l.presenca);
+
   return [...linhas].sort(
     (a, b) =>
+      // RF-C2 — quem faltou vai para o fim, antes de qualquer outro critério.
+      // Sem isto ela subiria ao topo justamente por não ter feedback, e a lista
+      // mandaria o mentor escrever sobre quem ele não teve como observar.
+      Number(faltou(a)) - Number(faltou(b)) ||
       a.recebidos - b.recebidos ||
       Number(a.euEscrevi) - Number(b.euEscrevi) ||
       a.nome.localeCompare(b.nome, "pt-BR"),
@@ -69,23 +80,38 @@ export function filtrarPorNome(
 
 export type Cobertura = {
   total: number;
-  /** Ninguém escreveu para estas pessoas neste encontro. */
+  /**
+   * **Vieram e ninguém escreveu para elas.** É este o número que incomoda.
+   *
+   * Não inclui quem faltou: `RF-C2`. Quem não veio não tinha como ser
+   * observado, e contá-lo aqui faria a tela cobrar do mentor o impossível —
+   * toda semana, até ele parar de acreditar no número.
+   */
   semNenhum: number;
+  /** Faltaram, com ou sem justificativa. Dito à parte, não somado ao alarme. */
+  faltaram: number;
   euEscrevi: number;
 };
 
 /**
- * O número que incomoda.
+ * O número que incomoda — e que precisa estar certo para incomodar.
  *
- * `semNenhum` é a mesma conta que `liberacao-do-encontro` vai mostrar antes de
- * confirmar a liberação. Mostrá-la já no painel dá ao mentor a chance de
- * consertar a desigualdade de atenção **enquanto ainda dá tempo**, em vez de
- * descobrir no instante em que ela vira fato consumado para aquela semana.
+ * `semNenhum` é a mesma conta que a liberação mostra antes de confirmar.
+ * Mostrá-la já no painel dá ao mentor a chance de consertar a desigualdade de
+ * atenção **enquanto ainda dá tempo**, em vez de descobrir no instante em que
+ * ela vira fato consumado para aquela semana.
+ *
+ * Quem ainda não foi marcado entra em `semNenhum`: não saber se a pessoa veio é
+ * motivo para olhar, não para relaxar.
  */
 export function coberturaDaTurma(linhas: readonly LinhaDaTurma[]): Cobertura {
+  const faltou = (l: LinhaDaTurma) =>
+    ausenciaExplicaFaltaDeFeedback(l.presenca);
+
   return {
     total: linhas.length,
-    semNenhum: linhas.filter((l) => l.recebidos === 0).length,
+    semNenhum: linhas.filter((l) => l.recebidos === 0 && !faltou(l)).length,
+    faltaram: linhas.filter(faltou).length,
     euEscrevi: linhas.filter((l) => l.euEscrevi).length,
   };
 }

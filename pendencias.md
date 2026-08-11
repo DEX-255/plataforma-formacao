@@ -94,7 +94,7 @@ Nada aqui bloqueia o desenho continuar; cada item bloqueia uma parte específica
 A spec foi decomposta em **quinze work items** em `.specs-fire/`. O estado de cada um
 vive no arquivo dele em `.specs-fire/intents/*/work-items/` — é lá que se olha, não aqui.
 
-**Onze concluídos**, com **316 testes** passando, lint limpo e build de produção OK:
+**Doze concluídos**, com **336 testes** passando, lint limpo e build de produção OK:
 
 | # | Item | O que entrou |
 |---|---|---|
@@ -109,10 +109,11 @@ vive no arquivo dele em `.specs-fire/intents/*/work-items/` — é lá que se ol
 | 9 | `trajetoria-do-participante` | Linha do tempo e encontro em detalhe, agrupado por eixo |
 | 10 | `liberacao-do-encontro` | Prévia com os números, confirmação digitada, liberação atômica |
 | 11 | `caixa-anonima` | Envio anônimo, leitura embaralhada, e o vazamento fechado |
+| 12 | `presenca` | Marcação em massa, e o alarme falso da cobertura resolvido |
 
-**Os quatro restantes, em ordem de dependência:**
+**Os três restantes, em ordem de dependência:**
 
-**`presenca`** → `turma-e-cobertura` → `encerramento-da-edicao` → `documento-final`
+**`turma-e-cobertura`** → `encerramento-da-edicao` → `documento-final`
 
 `documento-final` ainda passa por design doc antes do código.
 

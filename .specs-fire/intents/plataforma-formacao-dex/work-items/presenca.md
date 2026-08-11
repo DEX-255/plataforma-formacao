@@ -4,9 +4,12 @@ title: Presença por encontro
 intent: plataforma-formacao-dex
 complexity: low
 mode: autopilot
-status: pending
-depends_on: [edicao-e-encontros]
+status: completed
+depends_on:
+  - edicao-e-encontros
 created: 2026-08-06T00:26:01Z
+run_id: run-dex-010
+completed_at: 2026-08-11T21:04:28.324Z
 ---
 
 # Work Item: Presença por encontro
