@@ -165,6 +165,20 @@ export default async function Trajetoria() {
                 {estado.temConteudo && (
                   <p className="text-secundario text-roxo-claro">Ler →</p>
                 )}
+
+                {/* RF-F1 — a caixa aparece como chamada na trajetória enquanto
+                    o encontro está aberto. Fora daqui ela não tem entrada, e
+                    ninguém procura o que não vê.
+                    Só cai no ramo `<div>`: `temConteudo` exige liberado, e
+                    liberado exclui aberto — então nunca há link dentro de link. */}
+                {item.status === "aberto" && (
+                  <Link
+                    href={`/caixa/${item.id}`}
+                    className="inline-flex min-h-toque items-center text-secundario text-roxo-claro underline underline-offset-4"
+                  >
+                    Escrever na caixa anônima →
+                  </Link>
+                )}
               </>
             );
 

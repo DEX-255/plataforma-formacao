@@ -311,6 +311,27 @@ export default async function PainelDoEncontro({
         </section>
       )}
 
+      {/* RF-F2 — as mensagens só existem depois da liberação. */}
+      {encontro.status === "liberado" && (
+        <section className="flex flex-col gap-3 rounded-cartao border border-borda bg-superficie p-5">
+          <h2 className="font-display font-semibold text-titulo-secao text-papel">
+            Mensagens anônimas
+          </h2>
+          <p className="text-corpo text-neutro">
+            O que a turma escreveu sobre este encontro, sem autor e em ordem
+            embaralhada.
+          </p>
+          <div>
+            <Link
+              href={`/encontros/${encontro.id}/anonimas`}
+              className="inline-flex min-h-toque items-center rounded-pilula border border-borda px-5 text-secundario text-papel transition-colors duration-150 hover:border-borda-forte"
+            >
+              Ler as mensagens →
+            </Link>
+          </div>
+        </section>
+      )}
+
       {/* RF-B4 — o ritual semanal. Fica no fim de propósito: é a última coisa
           que se faz com o encontro, e não deve competir com a lista da turma
           enquanto ainda há gente para escrever. */}

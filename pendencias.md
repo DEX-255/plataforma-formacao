@@ -94,7 +94,7 @@ Nada aqui bloqueia o desenho continuar; cada item bloqueia uma parte específica
 A spec foi decomposta em **quinze work items** em `.specs-fire/`. O estado de cada um
 vive no arquivo dele em `.specs-fire/intents/*/work-items/` — é lá que se olha, não aqui.
 
-**Dez concluídos**, com **291 testes** passando, lint limpo e build de produção OK:
+**Onze concluídos**, com **316 testes** passando, lint limpo e build de produção OK:
 
 | # | Item | O que entrou |
 |---|---|---|
@@ -108,13 +108,13 @@ vive no arquivo dele em `.specs-fire/intents/*/work-items/` — é lá que se ol
 | 8 | `registrar-feedback` | Painel da turma com busca, formulário, nota com descritor |
 | 9 | `trajetoria-do-participante` | Linha do tempo e encontro em detalhe, agrupado por eixo |
 | 10 | `liberacao-do-encontro` | Prévia com os números, confirmação digitada, liberação atômica |
+| 11 | `caixa-anonima` | Envio anônimo, leitura embaralhada, e o vazamento fechado |
 
-**Os cinco restantes, em ordem de dependência:**
+**Os quatro restantes, em ordem de dependência:**
 
-**`caixa-anonima`** · `presenca` → `turma-e-cobertura` → `encerramento-da-edicao` →
-`documento-final`
+**`presenca`** → `turma-e-cobertura` → `encerramento-da-edicao` → `documento-final`
 
-`caixa-anonima` e `documento-final` ainda passam por design doc antes do código.
+`documento-final` ainda passa por design doc antes do código.
 
 **O que o item 8 deixou de pé.** `RN-06` ganhou guarda no banco: depois da liberação,
 o bloco visível não é reescrito nem apagado nem por quem tem acesso direto — o texto
@@ -182,3 +182,20 @@ de segurança sem a segurança.
 **Design** — home 4b · login com o card da 3e sobre o fundo escuro da 4b, sombra em roxo · sidebar escura · o caminho inteiro é escuro · paleta `#8C52FF` / `#14110F` / `#F3F0E8` · Bricolage Grotesque, Space Grotesk, Space Mono e Young Serif só na home.
 
 **Técnico** — Next.js (App Router) + TypeScript · Tailwind com os tokens do design system · Supabase para login Google, banco e RLS · Vercel · gráficos em SVG à mão · documento final em HTML com CSS de impressão.
+
+**O que o item 11 deixou de pé — e um vazamento fechado.** Ao desenhar a caixa
+anônima, procurando o vazamento **fora do esquema** como o item manda, apareceu um
+buraco no código já commitado: a política `enviada_mentor_le` dava a qualquer
+mentor leitura irrestrita de `mensagem_enviada`, que tem `participacao_id`.
+
+Verificado contra o banco, com a sessão de um mentor comum e o encontro **ainda
+aberto**, a consulta devolvia `Ana Beatriz Rocha`. Com uma mensagem no encontro, a
+identificação era completa. A proteção do esquema — não existir coluna ligando
+mensagem a autor — **supunha que a lista de quem enviou fosse secreta**, e ela não
+estava. Isso derrubava `RN-08` na letra.
+
+O teste de reidentificação existente passava porque atacava pelo lado difícil
+(`ctid`, junção entre as tabelas): não é preciso reidentificar nada quando a
+tabela entrega a lista pronta. A política foi removida, a contagem que `RF-B4`
+exige passou a vir de uma função que devolve só o inteiro, e entraram quatro
+testes novos fechando o caminho fácil.

@@ -4,9 +4,12 @@ title: Caixa de mensagem anônima
 intent: plataforma-formacao-dex
 complexity: high
 mode: validate
-status: pending
-depends_on: [liberacao-do-encontro]
+status: completed
+depends_on:
+  - liberacao-do-encontro
 created: 2026-08-06T00:26:01Z
+run_id: run-dex-009
+completed_at: 2026-08-11T20:49:57.073Z
 ---
 
 # Work Item: Caixa de mensagem anônima
