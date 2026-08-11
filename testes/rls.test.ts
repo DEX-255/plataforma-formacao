@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { Client } from "pg";
+import { limparTabelas } from "./bancada";
 
 /**
  * As regras invariantes, testadas contra o banco de verdade.
@@ -86,20 +87,7 @@ beforeAll(async () => {
   await db.connect();
 
   // Limpeza — o teste é reexecutável.
-  for (const tabela of [
-    "mensagem_enviada",
-    "mensagem_anonima",
-    "feedback",
-    "presenca",
-    "atribuicao_eixo",
-    "encontro",
-    "participacao",
-    "email_autorizado",
-    "usuario",
-    "edicao",
-  ]) {
-    await db.query(`delete from ${tabela}`);
-  }
+  await limparTabelas(db);
   await db.query("delete from auth.users");
 
   for (const [id, email] of [

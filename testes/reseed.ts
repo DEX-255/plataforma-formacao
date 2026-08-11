@@ -1,6 +1,7 @@
 import { Client } from "pg";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { limparTabelas } from "./bancada";
 
 /**
  * Restaura o seed de desenvolvimento depois da suíte.
@@ -33,20 +34,7 @@ const restaurarSeed = () => {
     }
 
     try {
-      for (const tabela of [
-        "mensagem_enviada",
-        "mensagem_anonima",
-        "feedback",
-        "presenca",
-        "atribuicao_eixo",
-        "encontro",
-        "participacao",
-        "email_autorizado",
-        "usuario",
-        "edicao",
-      ]) {
-        await db.query(`delete from ${tabela}`);
-      }
+      await limparTabelas(db);
       await db.query("delete from auth.users");
 
       const seed = readFileSync(

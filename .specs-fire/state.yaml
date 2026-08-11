@@ -75,11 +75,13 @@ intents:
         completed_at: 2026-08-11T11:40:27.816Z
       - id: registrar-feedback
         title: Registrar feedback — a tela do mentor
-        status: pending
+        status: completed
         complexity: high
         mode: validate
         depends_on:
           - edicao-e-encontros
+        run_id: run-dex-006
+        completed_at: 2026-08-11T14:18:54.131Z
       - id: trajetoria-do-participante
         title: Trajetória do participante
         status: pending
@@ -189,3 +191,11 @@ runs:
           mode: confirm
       started: 2026-08-11T11:40:06.684Z
       completed: 2026-08-11T11:40:27.816Z
+    - id: run-dex-006
+      scope: single
+      work_items:
+        - id: registrar-feedback
+          intent: plataforma-formacao-dex
+          mode: validate
+      started: 2026-08-11T13:48:18.223Z
+      completed: 2026-08-11T14:18:54.131Z

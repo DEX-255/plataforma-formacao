@@ -73,13 +73,28 @@ Nada aqui bloqueia o desenho continuar; cada item bloqueia uma parte específica
       mentores chegarem no encontro 2 sabendo disso — a recusa vai acontecer, e a tela já
       instrui a pessoa a procurar alguém.
 - [ ] **Datas dos encontros.** Existem os temas; as datas dependem de um horário que feche com todos. O sistema não depende disso — o encontro é criado quando acontece — mas a linha do tempo fica melhor com elas.
+- [ ] **O orçamento de 120 KB de JavaScript precisa de um número novo. · decisão de produto**
+      Medido na build de produção: a landing quase estática já custa **134 KB**
+      comprimidos, e `/membros` custa 137 KB. O piso do React 19 + Next 16 está
+      acima do orçamento inteiro, então **nenhuma rota deste projeto o cumpre**,
+      nem as que quase não têm JavaScript próprio.
+      A tela de registrar feedback deu ~143 KB: **~9 KB acima do piso**, e esses
+      9 KB são o formulário, o seletor de nota, o rascunho local e a busca.
+      O número 120 KB foi escrito antes de a stack ser medida. Três saídas:
+      1. **Revisar para o piso medido mais folga** (ex.: 160 KB) — reconhece a
+         escolha de stack que já foi feita por causa de `RN-03`.
+      2. **Trocar o critério por incremento sobre o piso** (ex.: "+15 KB por
+         rota") — mede o que a gente controla de fato.
+      3. **Atacar o piso em item próprio** — só vale se o 4G do corredor doer na
+         prática; medir com celular real antes de gastar isso.
+      Recomendo a 2: é a única que continua pegando regressão de verdade.
 
 ## Plano de execução — checkpoint de 11/08/2026
 
 A spec foi decomposta em **quinze work items** em `.specs-fire/`. O estado de cada um
 vive no arquivo dele em `.specs-fire/intents/*/work-items/` — é lá que se olha, não aqui.
 
-**Sete concluídos**, com **206 testes** passando, lint limpo e build de produção OK:
+**Oito concluídos**, com **239 testes** passando, lint limpo e build de produção OK:
 
 | # | Item | O que entrou |
 |---|---|---|
@@ -90,15 +105,24 @@ vive no arquivo dele em `.specs-fire/intents/*/work-items/` — é lá que se ol
 | 5 | `landing-publica` | Home 4b, com o símbolo redesenhado |
 | 6 | `membros-e-acesso` | `/membros` — colar lista, papel, quem ainda não entrou |
 | 7 | `edicao-e-encontros` | `/encontros`, painel, atribuição de eixos, navegação do mentor |
+| 8 | `registrar-feedback` | Painel da turma com busca, formulário, nota com descritor |
 
-**Os oito restantes, em ordem de dependência:**
+**Os sete restantes, em ordem de dependência:**
 
-**`registrar-feedback`** → `trajetoria-do-participante` → `liberacao-do-encontro` →
-`caixa-anonima` · `presenca` → `turma-e-cobertura` → `encerramento-da-edicao` →
-`documento-final`
+**`trajetoria-do-participante`** → `liberacao-do-encontro` → `caixa-anonima` ·
+`presenca` → `turma-e-cobertura` → `encerramento-da-edicao` → `documento-final`
 
-O `registrar-feedback` é o mais importante do produto e o único que ainda passa por
-design doc antes do código. `caixa-anonima` e `documento-final` também são `validate`.
+`caixa-anonima` e `documento-final` ainda passam por design doc antes do código.
+
+**O que o item 8 deixou de pé.** `RN-06` ganhou guarda no banco: depois da liberação,
+o bloco visível não é reescrito nem apagado nem por quem tem acesso direto — o texto
+que a pessoa leu na semana passada continua sendo o que existe. A prova de que a
+guarda vale é que a limpeza entre testes precisou desligar gatilho para funcionar
+(`testes/bancada.ts`).
+
+A separação dos dois blocos é feita **pelo nome de quem lê**: o cabeçalho diz "O que
+a Ana vai ler". Um teste de guarda novo varre os componentes de cliente e falha se
+`nota` ou `observacao_interna` aparecer em algum que não seja o formulário do mentor.
 
 **O que o item 7 deixou de pé.** O ciclo `rascunho → aberto → liberado` agora é
 garantido por gatilho no banco, não por checagem na tela: voltar de `liberado` é
@@ -115,6 +139,12 @@ e o teste do `@discente` assim que o OAuth existir.
 
 **Ao retomar:** as instruções de subir o ambiente estão no `README.md`, seção *Como
 rodar*. O login local por senha permite abrir todas as telas sem o Google.
+
+**Validação da interface acontece no fim, de uma vez.** Os fluxos que precisam de
+olho humano vão sendo acumulados em `roteiro-de-validacao.md` a cada item, e a
+passada completa acontece quando tudo estiver pronto — um conserto feito agora
+pode quebrar algo entregue três itens atrás, e validar em pedaços dá a sensação
+de segurança sem a segurança.
 
 ## Já decidido
 

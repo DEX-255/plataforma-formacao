@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
 import { Client } from "pg";
+import { limparTabelas } from "./bancada";
 
 /**
  * O ciclo de vida do encontro, contra o banco de verdade.
@@ -91,20 +92,7 @@ beforeAll(async () => {
   db = new Client({ connectionString: URL_BANCO });
   await db.connect();
 
-  for (const tabela of [
-    "mensagem_enviada",
-    "mensagem_anonima",
-    "feedback",
-    "presenca",
-    "atribuicao_eixo",
-    "encontro",
-    "participacao",
-    "email_autorizado",
-    "usuario",
-    "edicao",
-  ]) {
-    await db.query(`delete from ${tabela}`);
-  }
+  await limparTabelas(db);
   await db.query("delete from auth.users");
 
   for (const [id, email] of [

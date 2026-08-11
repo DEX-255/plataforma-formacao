@@ -5,7 +5,9 @@ import { exigirMentor } from "@/lib/auth";
 import { clienteServidor } from "@/lib/supabase/servidor";
 import { Chip } from "@/componentes/ui";
 import { FRAMEWORKS, acharEixo } from "@/dominio/frameworks";
-import { eixoDoMentorNoEncontro } from "@/dominio/regras";
+import { eixoDoMentorNoEncontro, encontroAceitaFeedback } from "@/dominio/regras";
+import { coberturaDaTurma, type LinhaDaTurma } from "@/dominio/painel";
+import { ListaDaTurma } from "./ListaDaTurma";
 import {
   estadoDoEncontro,
   podeAbrir,
@@ -44,10 +46,37 @@ export default async function PainelDoEncontro({
 
   if (!encontro) notFound();
 
-  const [{ data: atribuicoes }, { data: mentores }] = await Promise.all([
-    supabase.from("atribuicao_eixo").select("*").eq("encontro_id", encontro.id),
-    supabase.from("usuario").select("*").eq("papel", "mentor"),
-  ]);
+  const [{ data: atribuicoes }, { data: mentores }, { data: participacoes }, { data: feedbacks }] =
+    await Promise.all([
+      supabase.from("atribuicao_eixo").select("*").eq("encontro_id", encontro.id),
+      supabase.from("usuario").select("*").eq("papel", "mentor"),
+      supabase
+        .from("participacao")
+        .select("id, status, usuario:usuario_id (id, nome, avatar_url)")
+        .eq("edicao_id", encontro.edicao_id)
+        .eq("status", "ativo"),
+      // Só as colunas que a contagem usa. `select("*")` traria nota e
+      // observação interna para uma tela que não mostra nenhuma das duas —
+      // D-02 é "não busque o que a tela não usa", não só "não exiba".
+      supabase
+        .from("feedback")
+        .select("participacao_id, mentor_id")
+        .eq("encontro_id", encontro.id),
+    ]);
+
+  const turma: LinhaDaTurma[] = (participacoes ?? [])
+    .filter((p) => p.usuario)
+    .map((p) => ({
+      participacaoId: p.id,
+      nome: p.usuario!.nome,
+      avatarUrl: p.usuario!.avatar_url,
+      recebidos: (feedbacks ?? []).filter((f) => f.participacao_id === p.id).length,
+      euEscrevi: (feedbacks ?? []).some(
+        (f) => f.participacao_id === p.id && f.mentor_id === sessao.usuario.id,
+      ),
+    }));
+
+  const cobertura = coberturaDaTurma(turma);
 
   const definicao = FRAMEWORKS[encontro.framework];
   const estado = estadoDoEncontro(encontro);
@@ -255,11 +284,36 @@ export default async function PainelDoEncontro({
         </section>
       )}
 
-      {encontro.status === "aberto" && (
+      {/* RF-D5 — a tela de trabalho. Só faz sentido com o encontro aceitando
+          feedback: em rascunho ninguém escreve, e sem avaliação não há o quê. */}
+      {encontroAceitaFeedback(encontro) && (
+        <section className="flex flex-col gap-4">
+          <div className="flex flex-wrap items-baseline justify-between gap-3">
+            <h2 className="font-display font-semibold text-titulo-secao text-papel">
+              Turma
+            </h2>
+            <p className="text-secundario text-neutro">
+              {cobertura.euEscrevi} de {cobertura.total} por você
+            </p>
+          </div>
+
+          {/* O número que incomoda, e ainda dá tempo de consertar. */}
+          {cobertura.semNenhum > 0 && (
+            <p className="text-secundario text-atencao">
+              {cobertura.semNenhum === 1
+                ? "1 pessoa não recebeu feedback de ninguém neste encontro."
+                : `${cobertura.semNenhum} pessoas não receberam feedback de ninguém neste encontro.`}
+            </p>
+          )}
+
+          <ListaDaTurma encontroId={encontro.id} linhas={turma} />
+        </section>
+      )}
+
+      {encontro.status === "aberto" && !encontroAceitaFeedback(encontro) && (
         <p className="text-secundario text-neutro">
-          A tela de registro de feedback e a de presença chegam nos próximos
-          itens. Enquanto isso, o encontro já está visível na trajetória de quem
-          participa e a caixa anônima está aberta.
+          A marcação de presença chega no próximo item. O encontro já está
+          visível na trajetória de quem participa e a caixa anônima está aberta.
         </p>
       )}
     </main>

@@ -4,7 +4,7 @@ Plataforma interna do Hub de Empreendedorismo e Inovação do Instituto de Infor
 
 Os mentores registram feedback estruturado sobre cada participante ao longo dos encontros semanais da formação; cada participante acompanha a própria trajetória. No encerramento, todos recebem um documento individual com o que viveram no processo.
 
-**Estado:** 7 dos 15 work items concluídos · 206 testes passando.
+**Estado:** 8 dos 15 work items concluídos · 239 testes passando.
 **Primeiro uso real:** primeira semana de setembro de 2026.
 
 ## Como rodar
@@ -33,7 +33,7 @@ Ligado por `NEXT_PUBLIC_LOGIN_LOCAL=1`, que **não existe em produção** —
 `testes/guardas-auth.test.ts` falha se vazar.
 
 ```bash
-npm test                    # 206 testes; precisa do Supabase local de pé
+npm test                    # 239 testes; precisa do Supabase local de pé
 npm run lint
 npm run build
 
@@ -43,11 +43,12 @@ npx supabase stop           # libera os contêineres
 
 **Telas de pé:** `/` · `/entrar` · `/entrar?recusa=nao-autorizado` ·
 `/entrar?recusa=edicao-encerrada` · `/membros` · `/encontros` ·
-`/encontros/[id]` · `/encontros/[id]/eixos`.
+`/encontros/[id]` · `/encontros/[id]/eixos` ·
+`/encontros/[id]/feedback/[participacao]`.
 
 O mentor entra e cai em `/encontros`. Dá para criar encontro, atribuir eixos e abrir.
-O painel do encontro ainda não lista a turma nem aceita presença — isso chega com
-`registrar-feedback` e `presenca`. A área do participante não existe ainda: entrar como
+O painel lista a turma com busca, e dá para registrar feedback. Falta a marcação de
+presença, que chega com `presenca`. A área do participante não existe ainda: entrar como
 participante cai num 404 em `/trajetoria`.
 
 **Nota ao rodar os testes:** `npm test` limpa o banco e reaplica o seed no fim. Encontros
@@ -67,6 +68,9 @@ marca/       Identidade visual: logo e as explorações de design aprovadas.
 .specs-fire/ Plano de execução: os quinze work items em que a spec foi
              decomposta, com dependências e ordem. Ver abaixo.
 pendencias.md   O que ainda depende de decisão ou material.
+roteiro-de-validacao.md   Os fluxos que uma pessoa precisa conferir com o
+             sistema rodando. Cresce a cada item e é executado de uma vez
+             só, no fim — não etapa a etapa.
 ```
 
 ### `specs/` e `.specs-fire/` não competem

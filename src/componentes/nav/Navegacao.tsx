@@ -159,9 +159,25 @@ export function Sidebar({ temEncontroAberto, nome, sair }: Props) {
 
 // ── Celular ────────────────────────────────────────────────────────────────
 
+/** Telas de tarefa focada, onde o rodapé pertence à ação e não à navegação. */
+function ehTelaDeTarefa(caminho: string): boolean {
+  return caminho.includes("/feedback/");
+}
+
 export function BarraInferior({ temEncontroAberto }: Props) {
   const caminho = usePathname();
   const itens = DESTINOS.filter((d) => d.noCelular);
+
+  /**
+   * O formulário de feedback fixa o próprio "salvar" no rodapé (`specs/05`,
+   * Mobile), e os dois disputariam o mesmo canto de polegar — a barra ganharia,
+   * por estar acima, e esconderia o botão.
+   *
+   * Sumir é a escolha certa e não só a conveniente: ali o mentor está no meio
+   * de escrever sobre uma pessoa, e um destino de navegação encostado no
+   * polegar é convite a perder o texto. A saída é o link de voltar no topo.
+   */
+  if (ehTelaDeTarefa(caminho)) return null;
 
   return (
     <nav

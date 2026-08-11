@@ -201,6 +201,7 @@ describe("os utilitários nomeados existem de verdade", () => {
   const UTILITARIOS = [
     "min-h-toque",
     "min-h-toque-lista",
+    "size-toque",
     "borda-dura",
     "icone-roxo",
     "grao",
@@ -212,13 +213,18 @@ describe("os utilitários nomeados existem de verdade", () => {
     expect(css).toMatch(new RegExp(`@utility\\s+${nome}\\s*\\{`));
   });
 
-  it("toda classe min-h-toque usada no código tem utilitário correspondente", () => {
+  it("toda classe de alvo de toque usada no código tem utilitário correspondente", () => {
     const css = readFileSync(TOKENS, "utf8");
     const usadas = new Set<string>();
 
+    // `size-toque` entra na varredura junto de `min-h-toque`: é a mesma
+    // armadilha com outro nome, e o guarda que só olhasse um deixaria o
+    // seletor de nota com alvos de tamanho nenhum.
     for (const caminho of arquivos(FONTE, [".ts", ".tsx"])) {
       const conteudo = semComentarios(readFileSync(caminho, "utf8"));
-      for (const [, nome] of conteudo.matchAll(/\b(min-h-toque[\w-]*)/g)) {
+      for (const [, nome] of conteudo.matchAll(
+        /\b((?:min-h-toque|size-toque)[\w-]*)/g,
+      )) {
         if (nome) usadas.add(nome);
       }
     }

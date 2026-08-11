@@ -168,6 +168,15 @@
   min-height: var(--size-toque-lista);
 }
 
+/* Alvo quadrado de toque — os cinco níveis do seletor de nota.
+   Declarado à mão pela mesma razão que `min-h-toque`: o namespace `--size-*`
+   do @theme não alimenta os utilitários de tamanho do Tailwind, e a classe
+   passaria no teste sem gerar CSS nenhum. Já aconteceu neste projeto. */
+@utility size-toque {
+  width: var(--size-toque);
+  height: var(--size-toque);
+}
+
 @utility borda-dura {
   border-width: 2.5px;
   border-style: solid;

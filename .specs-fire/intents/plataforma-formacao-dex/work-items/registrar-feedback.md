@@ -4,9 +4,12 @@ title: Registrar feedback — a tela do mentor
 intent: plataforma-formacao-dex
 complexity: high
 mode: validate
-status: pending
-depends_on: [edicao-e-encontros]
+status: completed
+depends_on:
+  - edicao-e-encontros
 created: 2026-08-06T00:26:01Z
+run_id: run-dex-006
+completed_at: 2026-08-11T14:18:54.131Z
 ---
 
 # Work Item: Registrar feedback — a tela do mentor
