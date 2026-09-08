@@ -9,6 +9,7 @@ import { acharEixo, FRAMEWORKS } from "@/dominio/frameworks";
 import {
   mediaPorEixo,
   seriesPorEixo,
+  gradeDeNotas,
   type NotaDeEixo,
 } from "@/dominio/cobertura";
 import { ROTULO_DE_PRESENCA } from "@/dominio/presenca";
@@ -76,6 +77,7 @@ export default async function PerfilNaTurma({
 
   const medias = mediaPorEixo(notasDeOratoria);
   const series = seriesPorEixo("oratoria", notasDeOratoria);
+  const grade = gradeDeNotas(series);
 
   const porEncontro = [...(encontros ?? [])]
     .filter((e) => e.status !== "rascunho")
@@ -122,12 +124,12 @@ export default async function PerfilNaTurma({
                 <th className="border-b border-borda py-2 text-left font-mono text-rotulo uppercase text-neutro">
                   Eixo
                 </th>
-                {series[0]?.pontos.map((p) => (
+                {grade.encontros.map((n) => (
                   <th
-                    key={p.encontro}
+                    key={n}
                     className="border-b border-borda py-2 text-right font-mono text-rotulo uppercase text-neutro"
                   >
-                    {p.encontro}
+                    {n}
                   </th>
                 ))}
                 <th className="border-b border-borda py-2 text-right font-mono text-rotulo uppercase text-neutro">
@@ -136,20 +138,29 @@ export default async function PerfilNaTurma({
               </tr>
             </thead>
             <tbody>
-              {series.map((s) => {
-                const m = medias.get(s.eixo);
+              {grade.linhas.map((linha) => {
+                const m = medias.get(linha.eixo);
                 return (
-                  <tr key={s.eixo}>
+                  <tr key={linha.eixo}>
                     <td className="border-b border-borda py-2 text-papel">
-                      {acharEixo("oratoria", s.eixo)?.nome ?? s.eixo}
+                      {acharEixo("oratoria", linha.eixo)?.nome ?? linha.eixo}
                     </td>
-                    {s.pontos.map((p) => (
+                    {linha.celulas.map((c) => (
                       <td
-                        key={p.encontro}
+                        key={c.encontro}
                         className="border-b border-borda py-2 text-right text-papel"
                       >
-                        {/* RN-07 — não observado não vira zero nem célula vazia. */}
-                        {p.nota ?? "n/o"}
+                        {/* RN-07 — não observado não vira zero nem célula vazia;
+                            e "sem registro" não se confunde com ele. */}
+                        {c.estado === "nota" ? (
+                          c.nota
+                        ) : c.estado === "nao-observado" ? (
+                          "n/o"
+                        ) : (
+                          <span className="text-neutro" title="sem registro">
+                            ·
+                          </span>
+                        )}
                       </td>
                     ))}
                     <td className="border-b border-borda py-2 text-right text-papel">
@@ -166,7 +177,10 @@ export default async function PerfilNaTurma({
           <p className="text-secundario text-neutro">
             <strong className="text-papel">n/o</strong> é &ldquo;não
             observado&rdquo;: o mentor não teve como observar aquele eixo naquele
-            encontro. Não entra na média e não é nota baixa (`RN-07`).
+            encontro. Não entra na média e não é nota baixa (`RN-07`).{" "}
+            <strong className="text-papel">·</strong> é encontro em que aquele
+            eixo não foi registrado por ninguém — ausência de mentor, não
+            observação.
           </p>
         </section>
       )}

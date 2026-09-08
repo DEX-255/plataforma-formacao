@@ -210,6 +210,61 @@ export function seriesPorEixo(
     });
 }
 
+// ── A grade da tabela — RF-G2 ──────────────────────────────────────────────
+
+export type CelulaDaGrade =
+  | { encontro: number; estado: "nota"; nota: number }
+  /** O mentor olhou e não teve como observar (`RN-07`). */
+  | { encontro: number; estado: "nao-observado" }
+  /** Ninguém registrou aquele eixo naquele encontro. Não é o mesmo. */
+  | { encontro: number; estado: "sem-registro" };
+
+export type LinhaDaGrade = {
+  eixo: string;
+  celulas: readonly CelulaDaGrade[];
+};
+
+export type GradeDeNotas = {
+  encontros: readonly number[];
+  linhas: readonly LinhaDaGrade[];
+};
+
+/**
+ * A tabela que acompanha o gráfico, com **toda linha do mesmo comprimento**.
+ *
+ * Existe por causa de um defeito encontrado vendo rodar: a tela montava o
+ * cabeçalho com os encontros da *primeira* série e cada linha com os encontros
+ * *dela*. Como um eixo registrado a menos produz uma célula a menos, a coluna
+ * da média escorregava para a esquerda — e a média aparecia dentro da coluna de
+ * um encontro. A tabela dizia "Fala 3.0 no encontro 4" sobre uma pessoa que não
+ * recebeu nota nenhuma de Fala naquele encontro.
+ *
+ * Alinhar aqui, e não na tela, é o que torna a regra testável. E são **três**
+ * estados, não dois: nota, "não observado" e "sem registro". Confundir os dois
+ * últimos é o mesmo erro do `RN-07` numa casa nova — "não observado" é uma
+ * observação que o mentor fez; "sem registro" é ausência de mentor.
+ */
+export function gradeDeNotas(series: readonly SerieDeEixo[]): GradeDeNotas {
+  const encontros = [
+    ...new Set(series.flatMap((s) => s.pontos.map((p) => p.encontro))),
+  ].sort((a, b) => a - b);
+
+  const linhas = series.map((s) => {
+    const porEncontro = new Map(s.pontos.map((p) => [p.encontro, p]));
+    return {
+      eixo: s.eixo,
+      celulas: encontros.map((encontro): CelulaDaGrade => {
+        const p = porEncontro.get(encontro);
+        if (p === undefined) return { encontro, estado: "sem-registro" };
+        if (p.nota === null) return { encontro, estado: "nao-observado" };
+        return { encontro, estado: "nota", nota: p.nota };
+      }),
+    };
+  });
+
+  return { encontros, linhas };
+}
+
 /**
  * O canal de cor de um eixo — **pela identidade dele, não pela posição**.
  *

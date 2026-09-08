@@ -7,6 +7,7 @@ import {
   ordenarPorCobertura,
   resumoDaTurma,
   seriesPorEixo,
+  gradeDeNotas,
   segmentosContinuos,
   encontrosQueContam,
   canalDoEixo,
@@ -150,6 +151,49 @@ describe("ordem — quem tem menos vem primeiro", () => {
   it("empate resolve por nome — a lista não pode dançar", () => {
     const turma = [pessoa("C", 2), pessoa("A", 2), pessoa("B", 2)];
     expect(ordenarPorCobertura(turma).map((l) => l.nome)).toEqual(["A", "B", "C"]);
+  });
+});
+
+describe("a grade da tabela — toda linha do mesmo comprimento", () => {
+  // Encontrado vendo rodar: `fala` e `presenca` sem registro no encontro 4
+  // saíam com uma célula a menos, e a média escorregava para a coluna do
+  // encontro. A tabela dizia "Fala 3.0 no encontro 4" sobre alguém que não
+  // recebeu nota nenhuma de Fala ali.
+  const series = seriesPorEixo("oratoria", [
+    nota("mensagem", 3, 1),
+    nota("mensagem", 4, 4),
+    nota("fala", 2, 1),
+    nota("fala", null, 4),
+    nota("presenca", 5, 1),
+  ]);
+
+  it("todas as linhas têm uma célula por encontro, mesmo sem registro", () => {
+    const grade = gradeDeNotas(series);
+    expect(grade.encontros).toEqual([1, 4]);
+    for (const linha of grade.linhas) {
+      expect(linha.celulas).toHaveLength(grade.encontros.length);
+    }
+  });
+
+  it("cada célula fica na coluna do seu próprio encontro", () => {
+    const grade = gradeDeNotas(series);
+    for (const linha of grade.linhas) {
+      expect(linha.celulas.map((c) => c.encontro)).toEqual([...grade.encontros]);
+    }
+  });
+
+  it('"sem registro" não se confunde com "não observado"', () => {
+    const grade = gradeDeNotas(series);
+    const porEixo = new Map(grade.linhas.map((l) => [l.eixo, l.celulas]));
+
+    // `fala` no encontro 4: o mentor olhou e não teve como observar.
+    expect(porEixo.get("fala")?.[1]?.estado).toBe("nao-observado");
+    // `presenca` no encontro 4: ninguém registrou. Ausência de mentor.
+    expect(porEixo.get("presenca")?.[1]?.estado).toBe("sem-registro");
+  });
+
+  it("a grade sem série nenhuma não quebra", () => {
+    expect(gradeDeNotas([])).toEqual({ encontros: [], linhas: [] });
   });
 });
 

@@ -269,15 +269,25 @@ passa despercebida — e ela quase nunca é mérito.
       existiu.
 - [ ] **F9.7** A tabela abaixo do gráfico mostra `n/o` na célula, não zero nem
       vazio, e a média ignora esses encontros.
-- [ ] **F9.8 — A cor segue o eixo.** Abra o perfil de **duas pessoas
+- [ ] **F9.8 — As colunas não podem escorregar.** Deixe um eixo **sem registro
+      nenhum** no último encontro (registre só Mensagem, por exemplo) e abra o
+      perfil. Cada linha tem que ter uma célula por encontro, o encontro vazio
+      marcado com `·`, e a **média na coluna da média**. Já quebrou: a linha
+      curta empurrava a média para dentro da coluna do encontro, e a tabela
+      dizia "Fala 3.0 no encontro 4" sobre alguém que não recebeu nota de Fala
+      ali. Confira olhando o cabeçalho, não a linha.
+- [ ] **F9.9 — `·` e `n/o` não são a mesma coisa.** `n/o` é o mentor dizendo que
+      não teve como observar; `·` é ninguém ter registrado. Confirme que as duas
+      aparecem diferentes na mesma tabela, e que só `n/o` sai da média.
+- [ ] **F9.10 — A cor segue o eixo.** Abra o perfil de **duas pessoas
       diferentes** e confira que Fala tem a mesma cor nas duas. Se trocar, os
       documentos ficam incomparáveis.
-- [ ] **F9.9** Imprimir o gráfico em preto e branco (ou simular daltonismo) →
+- [ ] **F9.11** Imprimir o gráfico em preto e branco (ou simular daltonismo) →
       ainda dá para dizer qual linha é qual, pela legenda e pela tabela.
-- [ ] **F9.10** O perfil mostra o bloco interno — nota e observação — e a
+- [ ] **F9.12** O perfil mostra o bloco interno — nota e observação — e a
       trajetória do mesmo encontro **não** mostra. Comparar as duas telas lado a
       lado.
-- [ ] **F9.11** No celular, a turma são cartões empilhados, não tabela rolando
+- [ ] **F9.13** No celular, a turma são cartões empilhados, não tabela rolando
       na horizontal.
 
 ## F10 — Encerramento da edição
