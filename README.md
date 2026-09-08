@@ -4,8 +4,9 @@ Plataforma interna do Hub de Empreendedorismo e Inovação do Instituto de Infor
 
 Os mentores registram feedback estruturado sobre cada participante ao longo dos encontros semanais da formação; cada participante acompanha a própria trajetória. No encerramento, todos recebem um documento individual com o que viveram no processo.
 
-**Estado:** 15 dos 15 work items concluídos · 425 testes passando.
+**Estado:** 15 dos 15 work items concluídos · 429 testes passando.
 **Falta a passada de validação** — ver `roteiro-de-validacao.md`.
+**Para colocar no ar:** `DEPLOY.md` — a ordem obrigatória entre Supabase, Google e Vercel.
 **Primeiro uso real:** primeira semana de setembro de 2026.
 
 ## Como rodar

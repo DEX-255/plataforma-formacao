@@ -15,12 +15,13 @@ e por máquina, e não sobrevive à troca de gestão.
 ## Ao retomar, leia nesta ordem
 
 1. `revisao-geral.md` — o que falta até setembro, em três partes
-2. `README.md` — como subir o ambiente e quais telas existem
-3. `pendencias.md` — o histórico das decisões e o que cada item deixou de pé
-4. `.specs-fire/intents/*/work-items/` — o estado de cada item (`status:` no frontmatter)
-5. `specs/` — a especificação, começando por `specs/README.md`
-6. `dominio/` — documentos institucionais da DEX
-7. `roteiro-de-validacao.md` — os fluxos a conferir com o sistema rodando
+2. `DEPLOY.md` — como colocar no ar, e por que a ordem entre os serviços não é livre
+3. `README.md` — como subir o ambiente e quais telas existem
+4. `pendencias.md` — o histórico das decisões e o que cada item deixou de pé
+5. `.specs-fire/intents/*/work-items/` — o estado de cada item (`status:` no frontmatter)
+6. `specs/` — a especificação, começando por `specs/README.md`
+7. `dominio/` — documentos institucionais da DEX
+8. `roteiro-de-validacao.md` — os fluxos a conferir com o sistema rodando
 
 **Precedência:** `dominio/` > `specs/` > código. Divergência é defeito, não ambiguidade.
 
